@@ -1,0 +1,2366 @@
+# Sovereign distress episodes for the Sovereign section (/[lang]/sovereign, view sovereign/global): the hand-checked list of
+# IMF arrangements, euro-area/EU programmes and sovereign defaults for the 36 site economies, anything
+# active on or after 1990-01-01. Hand-checked like trade-flow's config/events.yaml: every entry was read
+# against the page in `source` (and `source2` when given) on 2 Nov 2026. Economies with no entry have no
+# episode of these kinds since 1990. Grouped by economy (ISO3, alphabetical), oldest start first.
+#
+# Types
+#   imf            IMF Stand-By Arrangement (SBA) or Extended Fund Facility (EFF).
+#   precautionary  IMF Flexible Credit Line (FCL), Short-term Liquidity Line (SLL) (PLL/PCL/PCI: none for
+#                  these economies), and SBAs/EFFs the authorities said they would treat as precautionary
+#                  (IMF press release in source2) and did not draw on.
+#   eu             Euro-area and EU programmes: Greek Loan Facility (GLF), EFSF, EFSM, ESM, EU balance-of-payments
+#                  assistance (EU-BoP).
+#   default        Sovereign debt in default, Bank of Canada-Bank of England Sovereign Default Database,
+#                  2026 edition (BoC Staff Analytical Paper 2026-48, Oct 2026,
+#                  https://www.bankofcanada.ca/2026/10/staff-analytical-paper-2026-48/; data read from the CSV
+#                  in `source`). `facility: restructuring` marks a distressed exchange or reprofiling.
+#
+# Date rules
+#   imf / precautionary  start = date of arrangement (Executive Board approval) and end = expiration date, both
+#       from the IMF "History of Lending Commitments" table for the member (extarr2.aspx, as of 30 Sep 2026,
+#       the latest date the page offers). That table shows the cancellation date for arrangements cancelled
+#       early, and the last disbursement for fully drawn ones. agreed/drawn in SDR million (the table's
+#       thousands / 1000); an SBA's figures include any Supplemental Reserve Facility (SRF) part (see note).
+#       end_kind: replaced = a successor arrangement began the same or the next day; cancelled = early end
+#       confirmed by a press release (source2); expired = the table date, no early cancellation found;
+#       running = scheduled expiration after today (end null, scheduled date in note).
+#   eu  start = approval of the facility (Eurogroup/Council/ESM board decision; note says which); end =
+#       programme end. agreed/drawn in EUR billion.
+#   default  The database is annual (US$ million in default at year end, by creditor group). A spell is a
+#       run of consecutive years with at least US$100m in default to one creditor group: commercial banks
+#       (FC bank loans), private bondholders (FC bonds), Paris Club, local currency (LC debt). Year spells
+#       run YYYY-01-01 to YYYY-12-31 with precision: year. Where a default date is well documented, start
+#       (or end) is that day with the evidence in source2/note, and precision: day. Spells running on
+#       1990-01-01 keep their true start and before_sample: true. Not entered: arrears to the IMF, World
+#       Bank, IDB, China and "other official creditors" (e.g. Greece 2013 and 2018, Portugal 2013, the
+#       UK in every year to 2022), "other private creditors" and domestic arrears. Indonesia's Paris Club
+#       entry for 1994 is left out as a suspected database error (see IDN). Argentina's bond spell, listed
+#       every year 2001-2025, is split at documented events (see the ARG notes).
+#
+# precision refers to `start`; a coarser end is said in `note`. ko labels: 스탠드바이협약(SBA),
+# 확대신용제도(EFF), 탄력적 크레딧라인(FCL), 채무불이행, 채무재조정.
+# Read on 2 Nov 2026 (IMF tables as of 30 Sep 2026; BoC-BoE data to end-2025).
+
+# --- ARG ------------------------------------------------------------
+- id: arg-default-default-1982
+  eco: ARG
+  type: default
+  facility: default
+  start: 1982-01-01
+  end: 1993-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: true
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$32.1bn in default at end-1991 (peak); spell 1982-1993."
+  checked: 2026-11-02
+
+- id: arg-default-default-1984
+  eco: ARG
+  type: default
+  facility: default
+  start: 1984-01-01
+  end: 1992-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: true
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: Paris Club debt in default every year 1984-1992; US$2.7bn at end-1992."
+  checked: 2026-11-02
+
+- id: arg-default-default-1989
+  eco: ARG
+  type: default
+  facility: default
+  start: 1989-01-01
+  end: 1990-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: true
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$3.1bn local-currency debt in default at end-1989, US$1.3bn at end-1990."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-1989
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 1989-11-10
+  end: 1991-03-31
+  end_kind: expired
+  precision: day
+  agreed: 736.0
+  drawn: 506.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: arg-imf-sba-1991
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 1991-07-29
+  end: 1992-03-31
+  end_kind: replaced
+  precision: day
+  agreed: 780.0
+  drawn: 438.75
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: "Ended the day the 1992 EFF was approved."
+  checked: 2026-11-02
+
+- id: arg-imf-eff-1992
+  eco: ARG
+  type: imf
+  facility: EFF
+  start: 1992-03-31
+  end: 1996-03-30
+  end_kind: expired
+  precision: day
+  agreed: 4020.25
+  drawn: 4020.25
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-1996
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 1996-04-12
+  end: 1998-01-11
+  end_kind: expired
+  precision: day
+  agreed: 720.0
+  drawn: 613.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: arg-precautionary-eff-1998
+  eco: ARG
+  type: precautionary
+  facility: EFF
+  start: 1998-02-04
+  end: 2000-03-10
+  end_kind: replaced
+  precision: day
+  agreed: 2080.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "Precautionary IMF Extended Fund Facility"
+  ko: "IMF 예방적 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/1998/pr9801.htm"
+  note: "PR 98/1: the government intends to treat the EFF credit as precautionary; nothing drawn. Replaced by the March 2000 SBA."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-2000
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 2000-03-10
+  end: 2003-01-23
+  end_kind: replaced
+  precision: day
+  agreed: 16936.8
+  drawn: 9756.31
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/2000/pr0017.htm"
+  note: "Approved at SDR 5,398.61m and announced as precautionary (PR 00/17), then augmented and heavily drawn, so kept as imf. Agreed/drawn include an SRF component (12 Jan 2001 - 11 Jan 2002; agreed SDR 6,086.66m, drawn 5,874.95m). Replaced by the Jan 2003 SBA."
+  checked: 2026-11-02
+
+- id: arg-default-default-2001
+  eco: ARG
+  type: default
+  facility: default
+  start: 2001-12-23
+  end: 2016-04-22
+  end_kind: completed
+  precision: day
+  creditor: "private bondholders (foreign-currency bonds)"
+  before_sample: false
+  en: "Default on foreign-currency bonds"
+  ko: "채무불이행(외화 국채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://www.upi.com/Archives/2001/12/23/Argentina-stops-debt-payments/4331009083600/"
+  note: "Start: interim president Rodriguez Saa announced suspension of foreign-debt payments on 23 Dec 2001 (UPI). End: holdout settlement payments on Friday 22 Apr 2016 (https://www.taipeitimes.com/News/world/archives/2016/04/24/2003644724). Holdout years 2005-2016 kept inside the spell; includes the 2014 default on restructured bonds caused by the US court injunction lifted in 2016. BoC-BoE lists FC bonds in default every year 2001-2025 (peak US$102.6bn end-2005); residual unsettled holdouts of US$3.3bn (2017) and US$1.1bn (2018) are not entered."
+  checked: 2026-11-02
+
+- id: arg-default-default-2002
+  eco: ARG
+  type: default
+  facility: default
+  start: 2002-01-01
+  end: 2013-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: false
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$2.75bn in default at end-2002, US$0.73bn at end-2013; amounts below US$100m from 2014 on (residual, not entered)."
+  checked: 2026-11-02
+
+- id: arg-default-default-2002-2
+  eco: ARG
+  type: default
+  facility: default
+  start: 2002-01-01
+  end: 2014-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$1.8bn at end-2002, US$9.7bn at end-2014; US$15m residual 2015-2019 not entered."
+  checked: 2026-11-02
+
+- id: arg-default-default-2002-3
+  eco: ARG
+  type: default
+  facility: default
+  start: 2002-01-01
+  end: 2011-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: local-currency debt in default from 2002 (peak US$10.5bn end-2004, US$112m end-2011); residual below US$100m later, not entered."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-2003
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 2003-01-24
+  end: 2003-08-31
+  end_kind: expired
+  precision: day
+  agreed: 2174.5
+  drawn: 2174.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-2003-2
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 2003-09-20
+  end: 2006-01-05
+  end_kind: cancelled
+  precision: day
+  agreed: 8981.0
+  drawn: 4171.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/2005/pr05278.htm"
+  note: "Ended early after Argentina repaid all its IMF credit (early repayment announced 15 Dec 2005, PR 05/278); end date is the IMF table's."
+  checked: 2026-11-02
+
+- id: arg-default-default-2017
+  eco: ARG
+  type: default
+  facility: default
+  start: 2017-01-01
+  end: 2017-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE lists US$523m local-currency debt in default at end-2017; the database does not describe the event."
+  checked: 2026-11-02
+
+- id: arg-imf-sba-2018
+  eco: ARG
+  type: imf
+  facility: SBA
+  start: 2018-06-20
+  end: 2020-07-24
+  end_kind: cancelled
+  precision: day
+  agreed: 40714.0
+  drawn: 31913.71
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: "https://www.imf.org/en/News/Articles/2021/12/22/pr21401-argentina"
+  note: "PR 21/401: the authorities decided to cancel the arrangement on 24 Jul 2020."
+  checked: 2026-11-02
+
+- id: arg-default-restructuring-2019
+  eco: ARG
+  type: default
+  facility: restructuring
+  start: 2019-08-28
+  end: 2020-12-31
+  end_kind: completed
+  precision: day
+  creditor: "local-law bondholders (US dollar and peso bills); local currency"
+  before_sample: false
+  en: "Reprofiling of local-law short-term debt"
+  ko: "채무재조정(국내법 단기채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://en.mercopress.com/2019/08/30/s-p-declares-that-argentina-s-extension-of-maturities-implies-a-selective-default"
+  note: "Start: unilateral extension of all short-term bond maturities on 28 Aug 2019 (S&P selective default). BoC-BoE: FC bonds US$9.1bn and LC debt US$4.2bn in default at end-2019; end is year-level (spell closed at end-2020)."
+  checked: 2026-11-02
+
+- id: arg-default-default-2020
+  eco: ARG
+  type: default
+  facility: default
+  start: 2020-05-22
+  end: 2020-09-04
+  end_kind: completed
+  precision: day
+  creditor: "private bondholders (foreign-law bonds)"
+  before_sample: false
+  en: "Default on foreign-currency bonds"
+  ko: "채무불이행(외화 국채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://en.mercopress.com/2020/05/23/argentina-in-technical-default-while-negotiations-with-sovereign-bondholders-continue"
+  note: "Start: missed about US$500m of interest at the end of the grace period on Friday 22 May 2020 (MercoPress). End: foreign-law exchange settled 4 Sep 2020 (https://www.clearygottlieb.com/news-and-insights/news-listing/argentina-in-63-4-billion-debt-restructuring). BoC-BoE: US$70.5bn FC bonds in default at end-2020; it keeps US$1-23bn listed every year 2021-2025 (residual amounts; the 2023 rise is not explained in the database), not entered."
+  checked: 2026-11-02
+
+- id: arg-default-default-2022
+  eco: ARG
+  type: default
+  facility: default
+  start: 2022-01-01
+  end: 2022-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$1.0bn owed to Paris Club in default at end-2022."
+  checked: 2026-11-02
+
+- id: arg-imf-eff-2022
+  eco: ARG
+  type: imf
+  facility: EFF
+  start: 2022-03-25
+  end: 2024-12-31
+  end_kind: expired
+  precision: day
+  agreed: 31914.0
+  drawn: 31100.0
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: arg-imf-eff-2025
+  eco: ARG
+  type: imf
+  facility: EFF
+  start: 2025-04-11
+  end: null
+  end_kind: running
+  precision: day
+  agreed: 15267.0
+  drawn: 11452.0
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=30&date1key=2026-09-30"
+  source2: null
+  note: "Scheduled expiration 10 Apr 2029; drawn as of 30 Sep 2026."
+  checked: 2026-11-02
+
+# --- BRA ------------------------------------------------------------
+- id: bra-default-default-1983
+  eco: BRA
+  type: default
+  facility: default
+  start: 1983-01-01
+  end: 1994-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: true
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: commercial bank debt in default 1983-1994 (peak US$70.1bn end-1990)."
+  checked: 2026-11-02
+
+- id: bra-default-default-1987
+  eco: BRA
+  type: default
+  facility: default
+  start: 1987-01-01
+  end: 1993-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: true
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: Paris Club debt in default every year 1987-1993 (peak US$10.4bn end-1992)."
+  checked: 2026-11-02
+
+- id: bra-imf-sba-1988
+  eco: BRA
+  type: imf
+  facility: SBA
+  start: 1988-08-23
+  end: 1990-02-28
+  end_kind: expired
+  precision: day
+  agreed: 1096.0
+  drawn: 365.3
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=90&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: bra-default-default-1990
+  eco: BRA
+  type: default
+  facility: default
+  start: 1990-01-01
+  end: 1991-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$62.2bn local-currency debt in default at end-1990 and end-1991."
+  checked: 2026-11-02
+
+- id: bra-imf-sba-1992
+  eco: BRA
+  type: imf
+  facility: SBA
+  start: 1992-01-29
+  end: 1993-08-31
+  end_kind: expired
+  precision: day
+  agreed: 1500.0
+  drawn: 127.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=90&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: bra-imf-sba-1998
+  eco: BRA
+  type: imf
+  facility: SBA
+  start: 1998-12-02
+  end: 2001-09-14
+  end_kind: replaced
+  precision: day
+  agreed: 13024.8
+  drawn: 9470.75
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=90&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (to 1 Dec 1999; agreed SDR 9,117.36m, drawn 6,512.4m). Replaced by the Sep 2001 SBA approved the same day."
+  checked: 2026-11-02
+
+- id: bra-imf-sba-2001
+  eco: BRA
+  type: imf
+  facility: SBA
+  start: 2001-09-14
+  end: 2002-09-05
+  end_kind: replaced
+  precision: day
+  agreed: 12144.4
+  drawn: 11385.374
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=90&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (agreed SDR 9,950.874m, fully drawn). Replaced by the SBA of 6 Sep 2002."
+  checked: 2026-11-02
+
+- id: bra-imf-sba-2002
+  eco: BRA
+  type: imf
+  facility: SBA
+  start: 2002-09-06
+  end: 2005-03-31
+  end_kind: expired
+  precision: day
+  agreed: 27375.12
+  drawn: 17199.638
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=90&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (to 5 Sep 2003; agreed and drawn SDR 7,609.691m)."
+  checked: 2026-11-02
+
+# --- CHL ------------------------------------------------------------
+- id: chl-default-default-1983
+  eco: CHL
+  type: default
+  facility: default
+  start: 1983-01-01
+  end: 1990-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: true
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: commercial bank debt in default 1983-1990 (US$6.5bn end-1990)."
+  checked: 2026-11-02
+
+- id: chl-imf-sba-1989
+  eco: CHL
+  type: imf
+  facility: SBA
+  start: 1989-11-08
+  end: 1990-11-07
+  end_kind: expired
+  precision: day
+  agreed: 64.0
+  drawn: 64.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: chl-precautionary-fcl-2020
+  eco: CHL
+  type: precautionary
+  facility: FCL
+  start: 2020-05-29
+  end: 2022-05-19
+  end_kind: replaced
+  precision: day
+  agreed: 17443.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the SLL approved 20 May 2022."
+  checked: 2026-11-02
+
+- id: chl-precautionary-sll-2022
+  eco: CHL
+  type: precautionary
+  facility: SLL
+  start: 2022-05-20
+  end: 2022-08-28
+  end_kind: replaced
+  precision: day
+  agreed: 2529.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Short-term Liquidity Line"
+  ko: "IMF 단기 유동성 지원(SLL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the FCL approved 29 Aug 2022."
+  checked: 2026-11-02
+
+- id: chl-precautionary-fcl-2022
+  eco: CHL
+  type: precautionary
+  facility: FCL
+  start: 2022-08-29
+  end: 2024-08-26
+  end_kind: replaced
+  precision: day
+  agreed: 13954.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: chl-precautionary-fcl-2024
+  eco: CHL
+  type: precautionary
+  facility: FCL
+  start: 2024-08-27
+  end: 2026-08-25
+  end_kind: replaced
+  precision: day
+  agreed: 10465.8
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: chl-precautionary-fcl-2026
+  eco: CHL
+  type: precautionary
+  facility: FCL
+  start: 2026-08-26
+  end: null
+  end_kind: running
+  precision: day
+  agreed: 8721.5
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=170&date1key=2026-09-30"
+  source2: null
+  note: "Scheduled expiration 25 Aug 2028."
+  checked: 2026-11-02
+
+# --- COL ------------------------------------------------------------
+- id: col-imf-eff-1999
+  eco: COL
+  type: imf
+  facility: EFF
+  start: 1999-12-20
+  end: 2002-12-19
+  end_kind: expired
+  precision: day
+  agreed: 1957.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/nb/2002/nb0205.htm"
+  note: "No purchases made (News Brief 02/05), but the press releases checked (PR 99/63, NB 02/05) do not call it precautionary, so kept as imf."
+  checked: 2026-11-02
+
+- id: col-precautionary-sba-2003
+  eco: COL
+  type: precautionary
+  facility: SBA
+  start: 2003-01-15
+  end: 2005-05-02
+  end_kind: replaced
+  precision: day
+  agreed: 1548.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "Precautionary IMF Stand-By Arrangement"
+  ko: "IMF 예방적 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/2003/pr0304.htm"
+  note: "PR 03/04: authorities intend to treat the stand-by credit as precautionary. PR 05/95: no drawings; ended 2 May 2005 at Colombia's request, replaced by the 2005 SBA."
+  checked: 2026-11-02
+
+- id: col-precautionary-sba-2005
+  eco: COL
+  type: precautionary
+  facility: SBA
+  start: 2005-05-02
+  end: 2006-11-02
+  end_kind: expired
+  precision: day
+  agreed: 405.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "Precautionary IMF Stand-By Arrangement"
+  ko: "IMF 예방적 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/2005/pr0595.htm"
+  note: "PR 05/95: authorities treat the arrangement as precautionary and do not intend to draw; PR 06/128 repeats it. Nothing drawn. PR dated 29 Apr 2005; IMF table dates the arrangement 2 May 2005."
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2009
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2009-05-11
+  end: 2010-05-06
+  end_kind: replaced
+  precision: day
+  agreed: 6966.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2010
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2010-05-07
+  end: 2011-05-05
+  end_kind: replaced
+  precision: day
+  agreed: 2322.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2011
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2011-05-06
+  end: 2013-05-05
+  end_kind: expired
+  precision: day
+  agreed: 3870.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2013
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2013-06-24
+  end: 2015-06-16
+  end_kind: replaced
+  precision: day
+  agreed: 3870.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2015
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2015-06-17
+  end: 2016-06-12
+  end_kind: replaced
+  precision: day
+  agreed: 3870.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2016
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2016-06-13
+  end: 2018-05-24
+  end_kind: replaced
+  precision: day
+  agreed: 8180.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2018
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2018-05-25
+  end: 2020-04-30
+  end_kind: replaced
+  precision: day
+  agreed: 7848.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2020
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2020-05-01
+  end: 2022-04-28
+  end_kind: replaced
+  precision: day
+  agreed: 12267.0
+  drawn: 3750.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: "Colombia drew SDR 3,750m under this FCL."
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2022
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2022-04-29
+  end: 2024-04-25
+  end_kind: replaced
+  precision: day
+  agreed: 7155.7
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: col-precautionary-fcl-2024
+  eco: COL
+  type: precautionary
+  facility: FCL
+  start: 2024-04-26
+  end: 2025-09-30
+  end_kind: cancelled
+  precision: day
+  agreed: 6133.5
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=190&date1key=2026-09-30"
+  source2: "https://www.imf.org/en/news/articles/2025/10/01/pr-25324-colombia-colombia-cancels-the-flexible-credit-line-arrangement-with-the-imf"
+  note: "PR 25/324: Colombia cancelled the two-year FCL effective 1 Oct 2025; IMF table end date 30 Sep 2025."
+  checked: 2026-11-02
+
+# --- CZE ------------------------------------------------------------
+- id: cze-imf-sba-1993
+  eco: CZE
+  type: imf
+  facility: SBA
+  start: 1993-03-17
+  end: 1994-03-16
+  end_kind: expired
+  precision: day
+  agreed: 177.0
+  drawn: 70.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=242&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+# --- ESP ------------------------------------------------------------
+- id: esp-eu-esm-2012
+  eco: ESP
+  type: eu
+  facility: ESM
+  start: 2012-07-20
+  end: 2013-12-31
+  end_kind: completed
+  precision: day
+  agreed: 100.0
+  drawn: 41.3
+  creditor: null
+  before_sample: false
+  en: "ESM bank recapitalisation loan to Spain"
+  ko: "유럽안정메커니즘(ESM) 은행 자본확충 지원"
+  source: "https://www.esm.europa.eu/press-releases/spain-successfully-exits-esm-financial-assistance-programme"
+  source2: "https://www.imf.org/external/np/sec/pr/2012/pr12266.htm"
+  note: "Start: Eurogroup decision of 20 Jul 2012 to grant up to EUR 100bn for bank recapitalisation (IMF PR 12/266 welcomes it the same day), funded by the EFSF until transferred to the ESM; first disbursement 11 Dec 2012. End: ESM says the programme expired 31 Dec 2013 (the Commission says Spain exited in January 2014); EUR 41.3bn disbursed."
+  checked: 2026-11-02
+
+# --- GRC ------------------------------------------------------------
+- id: grc-eu-glf-2010
+  eco: GRC
+  type: eu
+  facility: GLF
+  start: 2010-05-02
+  end: 2011-12-31
+  end_kind: replaced
+  precision: day
+  agreed: 80.0
+  drawn: 52.9
+  creditor: null
+  before_sample: false
+  en: "Greek Loan Facility (euro-area loans)"
+  ko: "그리스 대출 기금(GLF) 지원"
+  source: "https://www.esm.europa.eu/assistance/greece/explainer-esm-and-efsf-financial-assistance-greece"
+  source2: "https://ec.europa.eu/economy_finance/publications/occasional_paper/2010/pdf/ocp68_en.pdf"
+  note: "Start: Eurogroup agreed the package of up to EUR 80bn on 2 May 2010 (EC Occasional Paper 68); first disbursement 18 May 2010. ESM gives EUR 52.9bn of bilateral loans and dates the programme 2010-2011, so the end is year-level; superseded by the EFSF programme (21 Feb 2012)."
+  checked: 2026-11-02
+
+- id: grc-imf-sba-2010
+  eco: GRC
+  type: imf
+  facility: SBA
+  start: 2010-05-09
+  end: 2012-03-14
+  end_kind: replaced
+  precision: day
+  agreed: 26432.9
+  drawn: 17541.8
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=360&date1key=2026-09-30"
+  source2: null
+  note: "Cancelled and replaced by the EFF approved 15 Mar 2012."
+  checked: 2026-11-02
+
+- id: grc-eu-efsf-2012
+  eco: GRC
+  type: eu
+  facility: EFSF
+  start: 2012-02-21
+  end: 2015-06-30
+  end_kind: expired
+  precision: day
+  agreed: null
+  drawn: 141.8
+  creditor: null
+  before_sample: false
+  en: "EFSF programme for Greece"
+  ko: "유럽재정안정기금(EFSF) 지원"
+  source: "https://www.esm.europa.eu/press-releases/efsf-programme-greece-expires-today"
+  source2: null
+  note: "ESM: the EFSF programme started on 21 Feb 2012, was extended twice and expired at midnight on 30 Jun 2015; EUR 141.8bn disbursed. Committed amount not stated on the page checked."
+  checked: 2026-11-02
+
+- id: grc-default-restructuring-2012
+  eco: GRC
+  type: default
+  facility: restructuring
+  start: 2012-03-09
+  end: 2012-12-31
+  end_kind: completed
+  precision: day
+  creditor: "private bondholders (PSI exchange)"
+  before_sample: false
+  en: "Private-sector debt exchange (PSI)"
+  ko: "채무재조정(민간 채권자 손실분담)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://www.isda.org/2012/03/09/isda-emea-determinations-committee-restructuring-credit-event-has-occurred-with-respect-to-the-hellenic-republic"
+  note: "BoC-BoE: US$312.4bn FC bonds in default in 2012 only. Start: ISDA EMEA DC ruled a restructuring credit event on 9 Mar 2012 after Greece used collective action clauses. End year-level."
+  checked: 2026-11-02
+
+- id: grc-imf-eff-2012
+  eco: GRC
+  type: imf
+  facility: EFF
+  start: 2012-03-15
+  end: 2016-01-15
+  end_kind: cancelled
+  precision: day
+  agreed: 23785.3
+  drawn: 10224.5
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=360&date1key=2026-09-30"
+  source2: "https://www.tovima.gr/2016/02/23/international/existing-imf-program-cancelled-paving-the-way-for-a-new-agreement/"
+  note: "Cancelled at the request of the Greek authorities (To Vima, 23 Feb 2016, citing the IMF); was due to expire end-March 2016. End date is the IMF table's."
+  checked: 2026-11-02
+
+- id: grc-eu-esm-2015
+  eco: GRC
+  type: eu
+  facility: ESM
+  start: 2015-08-19
+  end: 2018-08-20
+  end_kind: completed
+  precision: day
+  agreed: 86.0
+  drawn: 61.9
+  creditor: null
+  before_sample: false
+  en: "ESM programme for Greece"
+  ko: "유럽안정메커니즘(ESM) 지원"
+  source: "https://www.esm.europa.eu/press-releases/esm-board-governors-approves-esm-programme-greece"
+  source2: "https://www.esm.europa.eu/assistance/greece/greece-successfully-concludes-esm-programme"
+  note: "Start: ESM Board of Governors approved the Financial Assistance Facility Agreement on 19 Aug 2015 (up to EUR 86bn). End: programme concluded 20 Aug 2018; EUR 61.9bn disbursed (ESM explainer)."
+  checked: 2026-11-02
+
+# --- HUN ------------------------------------------------------------
+- id: hun-imf-sba-1990
+  eco: HUN
+  type: imf
+  facility: SBA
+  start: 1990-03-14
+  end: 1991-02-20
+  end_kind: replaced
+  precision: day
+  agreed: 159.21
+  drawn: 127.37
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=415&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the EFF approved the same day."
+  checked: 2026-11-02
+
+- id: hun-imf-eff-1991
+  eco: HUN
+  type: imf
+  facility: EFF
+  start: 1991-02-20
+  end: 1993-09-15
+  end_kind: replaced
+  precision: day
+  agreed: 1114.0
+  drawn: 557.235
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=415&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the SBA approved the same day."
+  checked: 2026-11-02
+
+- id: hun-imf-sba-1993
+  eco: HUN
+  type: imf
+  facility: SBA
+  start: 1993-09-15
+  end: 1994-12-14
+  end_kind: expired
+  precision: day
+  agreed: 340.0
+  drawn: 56.7
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=415&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: hun-precautionary-sba-1996
+  eco: HUN
+  type: precautionary
+  facility: SBA
+  start: 1996-03-15
+  end: 1998-02-14
+  end_kind: expired
+  precision: day
+  agreed: 264.18
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "Precautionary IMF Stand-By Arrangement"
+  ko: "IMF 예방적 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=415&date1key=2026-09-30"
+  source2: "https://www.imf.org/external/np/sec/pr/1996/pr9610.htm"
+  note: "PR 96/10: the authorities do not intend to make any drawings and will treat the stand-by as precautionary. Nothing drawn."
+  checked: 2026-11-02
+
+- id: hun-eu-eu-bop-2008
+  eco: HUN
+  type: eu
+  facility: EU-BoP
+  start: 2008-11-04
+  end: 2010-11-30
+  end_kind: expired
+  precision: day
+  agreed: 6.5
+  drawn: 5.5
+  creditor: null
+  before_sample: false
+  en: "EU balance-of-payments assistance"
+  ko: "EU 국제수지 지원"
+  source: "https://ec.europa.eu/dgs/economy_finance/evaluation/pdf/final_evaluation_bop_hungary_en.pdf"
+  source2: null
+  note: "Start: Council decision of 4 Nov 2008 (up to EUR 6.5bn); EUR 5.5bn drawn. End is month-level: the Commission's ex-post evaluation says the assistance expired in November 2010."
+  checked: 2026-11-02
+
+- id: hun-imf-sba-2008
+  eco: HUN
+  type: imf
+  facility: SBA
+  start: 2008-11-06
+  end: 2010-10-05
+  end_kind: expired
+  precision: day
+  agreed: 10537.5
+  drawn: 7637.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=415&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+# --- IDN ------------------------------------------------------------
+- id: idn-imf-sba-1997
+  eco: IDN
+  type: imf
+  facility: SBA
+  start: 1997-11-05
+  end: 1998-08-25
+  end_kind: replaced
+  precision: day
+  agreed: 8338.24
+  drawn: 3669.12
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=440&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the EFF approved the same day."
+  checked: 2026-11-02
+
+- id: idn-default-default-1998
+  eco: IDN
+  type: default
+  facility: default
+  start: 1998-01-01
+  end: 1998-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$4.2bn in default at end-1998. Paris Club lists agreements with Indonesia on 23 Sep 1998, 13 Apr 2000, 12 Apr 2002 and 10 May 2005. BoC-BoE also lists US$4.2bn owed to Paris Club in default in 1994 only, a year with no agreement on that list; treated as a database error and not entered."
+  checked: 2026-11-02
+
+- id: idn-imf-eff-1998
+  eco: IDN
+  type: imf
+  facility: EFF
+  start: 1998-08-25
+  end: 2000-02-03
+  end_kind: replaced
+  precision: day
+  agreed: 5383.1
+  drawn: 3797.7
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=440&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the EFF of 4 Feb 2000."
+  checked: 2026-11-02
+
+- id: idn-default-default-1999
+  eco: IDN
+  type: default
+  facility: default
+  start: 1999-01-01
+  end: 1999-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: false
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$350m commercial bank debt in default at end-1999."
+  checked: 2026-11-02
+
+- id: idn-default-default-2000
+  eco: IDN
+  type: default
+  facility: default
+  start: 2000-01-01
+  end: 2000-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$5.4bn at end-2000. Paris Club lists an agreement on 13 Apr 2000."
+  checked: 2026-11-02
+
+- id: idn-imf-eff-2000
+  eco: IDN
+  type: imf
+  facility: EFF
+  start: 2000-02-04
+  end: 2003-12-31
+  end_kind: expired
+  precision: day
+  agreed: 3638.0
+  drawn: 3638.0
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=440&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: idn-default-default-2002
+  eco: IDN
+  type: default
+  facility: default
+  start: 2002-01-01
+  end: 2002-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$5.5bn at end-2002. Paris Club lists an agreement on 12 Apr 2002."
+  checked: 2026-11-02
+
+- id: idn-default-default-2005
+  eco: IDN
+  type: default
+  facility: default
+  start: 2005-01-01
+  end: 2005-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$2.7bn at end-2005. Paris Club lists a treatment on 10 May 2005."
+  checked: 2026-11-02
+
+# --- IND ------------------------------------------------------------
+- id: ind-imf-sba-1991
+  eco: IND
+  type: imf
+  facility: SBA
+  start: 1991-01-18
+  end: 1991-04-17
+  end_kind: expired
+  precision: day
+  agreed: 551.925
+  drawn: 551.925
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=430&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: ind-imf-sba-1991-2
+  eco: IND
+  type: imf
+  facility: SBA
+  start: 1991-10-31
+  end: 1993-06-30
+  end_kind: expired
+  precision: day
+  agreed: 1656.0
+  drawn: 1656.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=430&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+# --- KOR ------------------------------------------------------------
+- id: kor-imf-sba-1997
+  eco: KOR
+  type: imf
+  facility: SBA
+  start: 1997-12-04
+  end: 2000-12-03
+  end_kind: expired
+  precision: day
+  agreed: 15500.0
+  drawn: 14412.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=550&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (4 Dec 1997 - 17 Dec 1998; agreed and drawn SDR 9,950m)."
+  checked: 2026-11-02
+
+# --- MEX ------------------------------------------------------------
+- id: mex-default-default-1982
+  eco: MEX
+  type: default
+  facility: default
+  start: 1982-01-01
+  end: 1990-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: true
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: commercial bank debt in default 1982-1990 (US$54.3bn end-1990)."
+  checked: 2026-11-02
+
+- id: mex-imf-eff-1989
+  eco: MEX
+  type: imf
+  facility: EFF
+  start: 1989-05-26
+  end: 1993-05-25
+  end_kind: expired
+  precision: day
+  agreed: 3729.6
+  drawn: 3263.4
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-imf-sba-1995
+  eco: MEX
+  type: imf
+  facility: SBA
+  start: 1995-02-01
+  end: 1997-02-15
+  end_kind: expired
+  precision: day
+  agreed: 12070.2
+  drawn: 8758.02
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-imf-sba-1999
+  eco: MEX
+  type: imf
+  facility: SBA
+  start: 1999-07-07
+  end: 2000-11-30
+  end_kind: expired
+  precision: day
+  agreed: 3103.0
+  drawn: 1939.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: "Checked for precautionary treatment: SDR 1,939.5m was drawn, so kept as imf."
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2009
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2009-04-17
+  end: 2010-03-24
+  end_kind: replaced
+  precision: day
+  agreed: 31528.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2010
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2010-03-25
+  end: 2011-01-09
+  end_kind: replaced
+  precision: day
+  agreed: 31528.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2011
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2011-01-10
+  end: 2012-11-29
+  end_kind: replaced
+  precision: day
+  agreed: 47292.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2012
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2012-11-30
+  end: 2014-11-25
+  end_kind: replaced
+  precision: day
+  agreed: 47292.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2014
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2014-11-26
+  end: 2016-05-26
+  end_kind: replaced
+  precision: day
+  agreed: 47292.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2016
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2016-05-27
+  end: 2017-11-28
+  end_kind: replaced
+  precision: day
+  agreed: 62388.9
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2017
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2017-11-29
+  end: 2019-11-21
+  end_kind: replaced
+  precision: day
+  agreed: 53476.2
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2019
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2019-11-22
+  end: 2021-11-18
+  end_kind: replaced
+  precision: day
+  agreed: 44563.5
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2021
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2021-11-19
+  end: 2023-11-14
+  end_kind: replaced
+  precision: day
+  agreed: 35650.8
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2023
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2023-11-15
+  end: 2025-11-12
+  end_kind: replaced
+  precision: day
+  agreed: 26738.1
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: mex-precautionary-fcl-2025
+  eco: MEX
+  type: precautionary
+  facility: FCL
+  start: 2025-11-13
+  end: null
+  end_kind: running
+  precision: day
+  agreed: 17825.4
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=670&date1key=2026-09-30"
+  source2: null
+  note: "Scheduled expiration 12 Nov 2027."
+  checked: 2026-11-02
+
+# --- POL ------------------------------------------------------------
+- id: pol-default-default-1981
+  eco: POL
+  type: default
+  facility: default
+  start: 1981-01-01
+  end: 1994-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: true
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: commercial bank debt in default 1981-1994 (US$13.5bn end-1994)."
+  checked: 2026-11-02
+
+- id: pol-default-default-1990
+  eco: POL
+  type: default
+  facility: default
+  start: 1990-01-01
+  end: 1991-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$9.4bn (end-1990) and US$29.9bn (end-1991) owed to Paris Club in default."
+  checked: 2026-11-02
+
+- id: pol-imf-sba-1990
+  eco: POL
+  type: imf
+  facility: SBA
+  start: 1990-02-05
+  end: 1991-03-04
+  end_kind: expired
+  precision: day
+  agreed: 545.0
+  drawn: 357.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-imf-eff-1991
+  eco: POL
+  type: imf
+  facility: EFF
+  start: 1991-04-18
+  end: 1993-03-08
+  end_kind: replaced
+  precision: day
+  agreed: 1224.0
+  drawn: 76.5
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: "Replaced by the SBA approved the same day."
+  checked: 2026-11-02
+
+- id: pol-imf-sba-1993
+  eco: POL
+  type: imf
+  facility: SBA
+  start: 1993-03-08
+  end: 1994-04-08
+  end_kind: expired
+  precision: day
+  agreed: 476.0
+  drawn: 357.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-imf-sba-1994
+  eco: POL
+  type: imf
+  facility: SBA
+  start: 1994-08-05
+  end: 1996-03-04
+  end_kind: expired
+  precision: day
+  agreed: 333.3
+  drawn: 283.3
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2009
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2009-05-06
+  end: 2010-05-05
+  end_kind: expired
+  precision: day
+  agreed: 13690.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2010
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2010-07-02
+  end: 2011-01-20
+  end_kind: replaced
+  precision: day
+  agreed: 13690.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2011
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2011-01-21
+  end: 2013-01-17
+  end_kind: replaced
+  precision: day
+  agreed: 19166.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2013
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2013-01-18
+  end: 2015-01-13
+  end_kind: replaced
+  precision: day
+  agreed: 22000.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2015
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2015-01-14
+  end: 2017-01-12
+  end_kind: replaced
+  precision: day
+  agreed: 13000.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: pol-precautionary-fcl-2017
+  eco: POL
+  type: precautionary
+  facility: FCL
+  start: 2017-01-13
+  end: 2017-11-02
+  end_kind: cancelled
+  precision: day
+  agreed: 6500.0
+  drawn: 0.0
+  creditor: null
+  before_sample: false
+  en: "IMF Flexible Credit Line"
+  ko: "IMF 탄력적 크레딧라인(FCL)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=805&date1key=2026-09-30"
+  source2: "https://www.imf.org/en/news/articles/2017/11/02/pr17418-poland-ends-the-two-year-flexible-credit-line-arrangement-with-the-imf"
+  note: "PR 17/418: Poland ended the FCL effective 3 Nov 2017; IMF table end date 2 Nov 2017."
+  checked: 2026-11-02
+
+# --- PRT ------------------------------------------------------------
+- id: prt-eu-efsf-2011
+  eco: PRT
+  type: eu
+  facility: EFSF
+  start: 2011-05-17
+  end: 2014-05-18
+  end_kind: completed
+  precision: day
+  agreed: 26.0
+  drawn: 26.0
+  creditor: null
+  before_sample: false
+  en: "EFSF programme for Portugal"
+  ko: "유럽재정안정기금(EFSF) 지원"
+  source: "https://www.esm.europa.eu/press-releases/portugal-successfully-exits-efsf-programme"
+  source2: "https://economy-finance.ec.europa.eu/eu-financial-assistance/euro-area-countries/financial-assistance-portugal_en"
+  note: "Start: programme formally adopted at the Eurogroup/ECOFIN meeting of 17 May 2011 (Commission); first EFSF disbursement 22 Jun 2011. End: ESM says the EFSF programme officially ended 18 May 2014; EUR 26bn committed and disbursed."
+  checked: 2026-11-02
+
+- id: prt-eu-efsm-2011
+  eco: PRT
+  type: eu
+  facility: EFSM
+  start: 2011-05-17
+  end: 2014-06-12
+  end_kind: completed
+  precision: day
+  agreed: 26.0
+  drawn: 24.3
+  creditor: null
+  before_sample: false
+  en: "EFSM loan to Portugal"
+  ko: "유럽재정안정메커니즘(EFSM) 지원"
+  source: "https://economy-finance.ec.europa.eu/eu-financial-assistance/euro-area-countries/financial-assistance-portugal_en"
+  source2: "https://www.legislation.gov.uk/eudn/2011/344/introduction/data.html"
+  note: "Start: Council Implementing Decision 2011/344/EU of 17 May 2011. End: the government decided to end the programme without the final tranche, announced 12 Jun 2014 (Commission); EUR 24.3bn of EUR 26bn disbursed."
+  checked: 2026-11-02
+
+- id: prt-imf-eff-2011
+  eco: PRT
+  type: imf
+  facility: EFF
+  start: 2011-05-20
+  end: 2014-06-30
+  end_kind: expired
+  precision: day
+  agreed: 23742.0
+  drawn: 22942.0
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=810&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+# --- RUS ------------------------------------------------------------
+- id: rus-default-default-1960
+  eco: RUS
+  type: default
+  facility: default
+  start: 1960-01-01
+  end: 1996-12-31
+  end_kind: completed
+  precision: year
+  creditor: "private bondholders (foreign-currency bonds)"
+  before_sample: true
+  en: "Default on foreign-currency bonds"
+  ko: "채무불이행(외화 국채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE (USSR/Russian Federation) lists FC bonds in default every year from the start of its series in 1960 to 1996 (US$0.6-0.9bn a year in 1987-1996). Start is the database's first year, not the original default, which is older."
+  checked: 2026-11-02
+
+- id: rus-default-default-1991
+  eco: RUS
+  type: default
+  facility: default
+  start: 1991-01-01
+  end: 1999-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: false
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: commercial bank debt in default 1991-1999 (peak US$30.5bn end-1997)."
+  checked: 2026-11-02
+
+- id: rus-default-default-1991-2
+  eco: RUS
+  type: default
+  facility: default
+  start: 1991-01-01
+  end: 1991-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE lists US$8.0bn local-currency debt in default at end-1991; event not described in the database."
+  checked: 2026-11-02
+
+- id: rus-imf-sba-1992
+  eco: RUS
+  type: imf
+  facility: SBA
+  start: 1992-08-05
+  end: 1993-01-04
+  end_kind: expired
+  precision: day
+  agreed: 719.0
+  drawn: 719.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=819&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+- id: rus-default-default-1993
+  eco: RUS
+  type: default
+  facility: default
+  start: 1993-01-01
+  end: 1996-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: Paris Club debt in default 1993-1996 (US$40.2bn end-1996)."
+  checked: 2026-11-02
+
+- id: rus-default-default-1993-2
+  eco: RUS
+  type: default
+  facility: default
+  start: 1993-01-01
+  end: 1993-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE lists US$5.1bn local-currency debt in default at end-1993; event not described in the database."
+  checked: 2026-11-02
+
+- id: rus-imf-sba-1995
+  eco: RUS
+  type: imf
+  facility: SBA
+  start: 1995-04-11
+  end: 1996-03-26
+  end_kind: replaced
+  precision: day
+  agreed: 4313.1
+  drawn: 4313.1
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=819&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement; replaced by the EFF approved the same day."
+  checked: 2026-11-02
+
+- id: rus-imf-eff-1996
+  eco: RUS
+  type: imf
+  facility: EFF
+  start: 1996-03-26
+  end: 1999-03-26
+  end_kind: expired
+  precision: day
+  agreed: 13206.57
+  drawn: 5779.714
+  creditor: null
+  before_sample: false
+  en: "IMF Extended Fund Facility"
+  ko: "IMF 확대신용제도(EFF)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=819&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (20 Jul 1998 - 26 Mar 1999; agreed SDR 3,992.47m, drawn 675.02m)."
+  checked: 2026-11-02
+
+- id: rus-default-default-1998
+  eco: RUS
+  type: default
+  facility: default
+  start: 1998-01-01
+  end: 2000-12-31
+  end_kind: completed
+  precision: year
+  creditor: "private bondholders (foreign-currency bonds)"
+  before_sample: false
+  en: "Default on foreign-currency bonds"
+  ko: "채무불이행(외화 국채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: FC bonds in default 1998-2000 (US$29.6bn end-1998, US$33.3bn end-2000)."
+  checked: 2026-11-02
+
+- id: rus-default-default-1998-2
+  eco: RUS
+  type: default
+  facility: default
+  start: 1998-08-17
+  end: 1999-12-31
+  end_kind: completed
+  precision: day
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://en.wikipedia.org/wiki/1998_Russian_financial_crisis"
+  note: "Start: on 17 Aug 1998 the government devalued the ruble, defaulted on domestic (GKO/OFZ) debt and declared a moratorium on foreign debt. BoC-BoE: US$36.3bn LC debt in default at end-1998 and end-1999. End year-level."
+  checked: 2026-11-02
+
+- id: rus-default-default-1999
+  eco: RUS
+  type: default
+  facility: default
+  start: 1999-01-01
+  end: 1999-12-31
+  end_kind: completed
+  precision: year
+  creditor: "Paris Club"
+  before_sample: false
+  en: "Default to Paris Club creditors"
+  ko: "채무불이행(파리클럽 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE: US$8.1bn owed to Paris Club in default at end-1999."
+  checked: 2026-11-02
+
+- id: rus-imf-sba-1999
+  eco: RUS
+  type: imf
+  facility: SBA
+  start: 1999-07-28
+  end: 2000-12-27
+  end_kind: expired
+  precision: day
+  agreed: 3300.0
+  drawn: 471.429
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=819&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: rus-default-default-2022
+  eco: RUS
+  type: default
+  facility: default
+  start: 2022-06-27
+  end: null
+  end_kind: running
+  precision: day
+  creditor: "private bondholders (foreign-currency bonds)"
+  before_sample: false
+  en: "Default on foreign-currency bonds"
+  ko: "채무불이행(외화 국채)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: "https://www.thenationalnews.com/business/markets/2022/06/27/what-a-russian-forced-debt-default-means-and-what-comes-next"
+  note: "Sanctions-related. The 30-day grace period on about US$100m of coupons due 27 May 2022 expired at midnight on Sunday 26 Jun 2022, so the first day in default is 27 Jun. BoC-BoE: US$44.4bn (end-2022) to US$52.6bn (end-2025) in default; still listed in 2025, the database's last year."
+  checked: 2026-11-02
+
+# --- THA ------------------------------------------------------------
+- id: tha-imf-sba-1997
+  eco: THA
+  type: imf
+  facility: SBA
+  start: 1997-08-20
+  end: 2000-06-19
+  end_kind: expired
+  precision: day
+  agreed: 2900.0
+  drawn: 2500.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=940&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+# --- TUR ------------------------------------------------------------
+- id: tur-imf-sba-1994
+  eco: TUR
+  type: imf
+  facility: SBA
+  start: 1994-07-08
+  end: 1996-03-07
+  end_kind: expired
+  precision: day
+  agreed: 610.5
+  drawn: 460.5
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=980&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: tur-default-default-1999
+  eco: TUR
+  type: default
+  facility: default
+  start: 1999-01-01
+  end: 1999-12-31
+  end_kind: completed
+  precision: year
+  creditor: "local currency debt"
+  before_sample: false
+  en: "Local-currency debt default"
+  ko: "채무불이행(자국 통화 채무)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE lists US$48.3bn local-currency debt in default at end-1999 (one year). Not corroborated by a second source and not described in the database; review before use."
+  checked: 2026-11-02
+
+- id: tur-imf-sba-1999
+  eco: TUR
+  type: imf
+  facility: SBA
+  start: 1999-12-22
+  end: 2002-02-04
+  end_kind: replaced
+  precision: day
+  agreed: 15038.4
+  drawn: 11738.96
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=980&date1key=2026-09-30"
+  source2: null
+  note: "Includes SRF component (21 Dec 2000 - 20 Dec 2001; agreed and drawn SDR 5,784m). Replaced by the SBA approved the same day."
+  checked: 2026-11-02
+
+- id: tur-imf-sba-2002
+  eco: TUR
+  type: imf
+  facility: SBA
+  start: 2002-02-04
+  end: 2005-02-03
+  end_kind: expired
+  precision: day
+  agreed: 12821.2
+  drawn: 11914.0
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=980&date1key=2026-09-30"
+  source2: null
+  note: null
+  checked: 2026-11-02
+
+- id: tur-imf-sba-2005
+  eco: TUR
+  type: imf
+  facility: SBA
+  start: 2005-05-11
+  end: 2008-05-10
+  end_kind: expired
+  precision: day
+  agreed: 6662.04
+  drawn: 6662.04
+  creditor: null
+  before_sample: false
+  en: "IMF Stand-By Arrangement"
+  ko: "IMF 스탠드바이협약(SBA)"
+  source: "https://www.imf.org/external/np/fin/tad/extarr2.aspx?memberKey1=980&date1key=2026-09-30"
+  source2: null
+  note: "fully drawn; IMF dates the end of a fully drawn arrangement at its last disbursement."
+  checked: 2026-11-02
+
+# --- ZAF ------------------------------------------------------------
+- id: zaf-default-default-1993
+  eco: ZAF
+  type: default
+  facility: default
+  start: 1993-01-01
+  end: 1993-12-31
+  end_kind: completed
+  precision: year
+  creditor: "commercial banks (foreign-currency loans)"
+  before_sample: false
+  en: "Default on commercial bank loans"
+  ko: "채무불이행(상업은행 대출)"
+  source: "https://www.bankofcanada.ca/valet/observations/group/DEBT_2026/csv"
+  source2: null
+  note: "BoC-BoE lists US$5.0bn commercial bank debt in default at end-1993 (its earlier spells, 1985-1987 and 1989, end before 1990)."
+  checked: 2026-11-02

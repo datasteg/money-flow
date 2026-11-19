@@ -1,0 +1,5 @@
+{
+  "note": "IndexNow key for money-flow.datasteg.com, served at /<key>.txt from app/public. The key is not part of this snapshot.",
+  "host": "money-flow.datasteg.com",
+  "key": "<indexnow-key>"
+}

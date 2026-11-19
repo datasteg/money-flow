@@ -1,0 +1,67 @@
+# The Sovereign section (/[lang]/sovereign; view sovereign/global): the economies, the seven rules with their default
+# thresholds and slider ranges, the market benchmark, and the expectations written down before the page was built
+# (2 Nov 2026, on global-network as the Fiscal Stress Monitor; moved to money-flow the same day).
+# Read by scripts/fetch_warning.py (what to fetch) and scripts/sitebuild/sovereign.py (the build). The seven rules are
+# R22–R28 in config/method.yaml, whose `sovereign` fields must equal the defaults here (tests/test_sovereign.py); the
+# validation is reported as checks V24–V26, never blocking.
+#
+# The signal is a COUNT of rules that are on, shown as "k of n available"; a missing rule is never counted as off.
+# Every threshold is adjustable on the page and every value here is a default, not a fitted number.
+
+# The 36 Signal Board economies (R19), Korea first. Adding an economy = adding its code here (and its
+# two-letter code below if FRED has its long-term rate); the fetch reads the list from this file.
+economies: [KOR, ARG, AUS, AUT, BEL, BRA, CAN, CHL, CHN, COL, CZE, DEU, DNK, ESP, FIN, FRA, GBR, GRC, HUN, IDN, IND, ISR,
+            ITA, JPN, MEX, MYS, NOR, NZL, POL, PRT, RUS, SAU, SWE, THA, TUR, ZAF]
+# Candidates for later (no Signal Board history, so R26 before the IMF IIP and R27 would be missing): Ireland,
+# Cyprus, Iceland, Ukraine, Egypt, Pakistan, Sri Lanka, Ecuador.
+suggested: [IRL, CYP, ISL, UKR, EGY, PAK, LKA, ECU]
+
+from: 1990               # first year drawn and counted
+projection_years: 2      # WEO projections drawn dashed: the current year and the next; never counted in validation
+
+# WEO vintage. Version 1 uses the latest vintage for every year (revisions unknown at the time included: Greece's 2009
+# deficit was put at 12.7% of GDP when the new government revised it in October 2009; this vintage has 15.4%). Version 2
+# will read archived vintages
+# and keep, for each year, the value first published after the year ended ("first").
+vintage: latest          # latest | first (version 2)
+
+# OECD long-term interest rates (10-year government bond yields, monthly averages) via FRED: IRLTLT01{iso2}M156N.
+# An economy without a series has R28 (r7) missing, not off.
+fred_iso2: {KOR: KR, ARG: AR, AUS: AU, AUT: AT, BEL: BE, BRA: BR, CAN: CA, CHL: CL, CHN: CN, COL: CO, CZE: CZ, DEU: DE,
+            DNK: DK, ESP: ES, FIN: FI, FRA: FR, GBR: GB, GRC: GR, HUN: HU, IDN: ID, IND: IN, ISR: IL, ITA: IT, JPN: JP,
+            MEX: MX, MYS: MY, NOR: "NO", NZL: NZ, POL: PL, PRT: PT, RUS: RU, SAU: SA, SWE: SE, THA: TH, TUR: TR, ZAF: ZA,
+            USA: US, IRL: IE, ISL: IS}
+# R28 (r7) benchmark: Germany for EU members (membership today), the United States otherwise. The benchmark itself has
+# r7 not applicable.
+eu_members: [AUT, BEL, CZE, DEU, DNK, ESP, FIN, FRA, GRC, HUN, ITA, POL, PRT, SWE, IRL, CYP]
+benchmark: {eu: DEU, other: USA}
+
+# The rules r1..r7 (= R22..R28 of the method). `dir` is the side that turns the rule on; `min`/`max`/`step` bound the slider.
+rules:
+  r1: {group: fiscal, default: 90, dir: ge, min: 30, max: 200, step: 5, unit: pct_gdp, source: "convention (Reinhart-Rogoff 90% debt level)"}
+  r2: {group: fiscal, default: -5, dir: le, min: -15, max: 0, step: 0.5, unit: pct_gdp, source: "convention (the EU Maastricht limit is 3%; 5% marks a large deficit)"}
+  r3: {group: fiscal, default: 1, dir: ge, min: -2, max: 6, step: 0.5, unit: pct_gdp, source: "convention (a gap of 1% of GDP a year adds about 10 points of GDP to debt in a decade)"}
+  r4: {group: external, default: -4, dir: le, min: -12, max: 0, step: 0.5, unit: pct_gdp, source: "EU macroeconomic imbalance procedure (MIP) scoreboard"}
+  r5: {group: external, default: -35, dir: le, min: -150, max: 0, step: 5, unit: pct_gdp, source: "EU macroeconomic imbalance procedure (MIP) scoreboard"}
+  r6: {group: external, default: 100, dir: ge, min: 25, max: 400, step: 5, unit: pct, source: "Greenspan-Guidotti rule (reserves should cover debt falling due within a year); A2 as method 1.4 (R17)"}
+  r7: {group: market, default: 4, dir: ge, min: 1, max: 10, step: 0.5, unit: pp, source: "convention (400 basis points, a common distress marker)"}
+K: {default: 4, min: 1, max: 7}
+
+# Validation: positive = the 1-3 years before an episode start; calm = more than 3 years from any episode of that
+# economy and outside the global windows. A distress entry that starts while another of the same economy runs, or
+# within `merge_years` of its end, continues that spell and is not a new start.
+validation: {pre: [1, 3], calm_gap: 3, global_years: [2008, 2009, 2020], merge_years: 1}
+
+# The expectations, written before the build and printed with their result (pass or fail) in the build log and reported
+# as check V26. `count_ge` tests the count with default settings in each listed year.
+expectations:
+  - {id: grc-2008, eco: GRC, years: [2008, 2009], test: count_ge, k: 4,
+     en: "Greece has a count of 4 or more in 2008–2009.", ko: "그리스는 2008~2009년에 신호 수가 4개 이상입니다."}
+  - {id: arg-1999, eco: ARG, years: [1999, 2000], test: count_ge, k: 4,
+     en: "Argentina has a count of 4 or more in 1999–2000.", ko: "아르헨티나는 1999~2000년에 신호 수가 4개 이상입니다."}
+  - {id: prt-2009, eco: PRT, years: [2009, 2010], test: count_ge, k: 4,
+     en: "Portugal has a count of 4 or more in 2009–2010.", ko: "포르투갈은 2009~2010년에 신호 수가 4개 이상입니다."}
+  - {id: kor-1996, eco: KOR, years: [1996], test: flagged_by, rule: r6,
+     en: "Korea in 1996 is flagged, mainly by R6 (short-term claims above net reserves).", ko: "1996년 한국은 주로 R6(단기 청구권이 순외환보유액보다 많음)으로 신호가 발생합니다."}
+  - {id: grc-2025, eco: GRC, years: [2025], test: rules, "on": [r1, r5], "off": [r2, r3],
+     en: "Greece in 2025 has R1 and R5 on, R2 and R3 off.", ko: "2025년 그리스는 R1과 R5에서 신호가 발생하고 R2와 R3에서는 발생하지 않습니다."}

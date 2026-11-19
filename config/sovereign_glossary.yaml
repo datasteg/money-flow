@@ -1,0 +1,680 @@
+# Every ⓘ tooltip on the Sovereign page (/[lang]/sovereign) and its block on the Method page, English and Korean, keyed
+# by term. Filled by scripts/sitebuild/sovereign.py into the view's `gloss`. One explanation per term, used everywhere it appears.
+#
+# Structure (at most about 60 words in English, all parts together):
+#   term     the name as the tooltip heads it
+#   what     What it is: one sentence
+#   why      Why it matters: one sentence on how it connects to a country running out of money
+#   calc     How it is computed: the formula in words
+#   formula  (R3 and its parts only) the formula in symbols
+#   thr      Threshold: the default and where it comes from
+#   ex       Example: real values, written as placeholders that scripts/warning.py fills from this build's data, so an
+#            example can never disagree with the chart. {ECO.YEAR.KEY[:fmt]}: KEY r1..r7, ca, i, g, pbstar, pb,
+#            interest, count; fmt pct (default), pct0, pp, num, int. {val.KEY}: the validation with default settings.
+#            {ep.TYPE}: number of episodes of a type. {ECO.name}: the economy's name.
+#   src      sources, as ids (imf.weo, oecd.ltr, imf.lending, eu.esm, boc.boe, eu.mip, imf.iip, imf.bop, imf.irfcl, bis.cbs) matching config/sources.yaml `links`
+# Korean is written natively (해라체, guides/voice-ko.md), with the standard Korean economic terms; the English term
+# appears in the heading so the reader can look it up.
+
+# ---------------------------------------------------------------- the seven rules
+w_r1:
+  src: [{src: imf.weo, series: [GGXWDG_NGDP]}]
+  en:
+    term: R1 Debt level
+    what: Government debt as a share of the economy's yearly output.
+    why: More debt means more to roll over each year and less room in a shock.
+    calc: General government gross debt ÷ GDP × 100.
+    thr: On at 90% of GDP or more. A common convention, not a hard limit.
+    ex: "Greece {GRC.2009.r1} in 2009. Korea {KOR.2025.r1} in 2025."
+  ko:
+    term: R1 정부부채 수준
+    what: 정부부채를 한 해 생산(GDP)과 비교한 비율입니다.
+    why: 부채가 많을수록 해마다 만기가 도래하는 채무가 많고, 충격을 흡수할 재정여력은 줄어듭니다.
+    calc: 일반정부 총부채 ÷ GDP × 100.
+    thr: GDP의 90% 이상이면 신호가 발생합니다. 흔히 쓰는 관행일 뿐 넘으면 안 되는 한도는 아닙니다.
+    ex: "2009년 그리스 {GRC.2009.r1}, 2025년 한국 {KOR.2025.r1}."
+
+w_r2:
+  src: [{src: imf.weo, series: [GGXCNL_NGDP]}]
+  en:
+    term: R2 Deficit
+    what: How much more the government spends than it collects in a year.
+    why: A deficit has to be borrowed, so a large one adds to debt fast.
+    calc: General government balance, interest included, ÷ GDP × 100.
+    thr: On at −5% of GDP or below. The EU's Maastricht limit is −3%.
+    ex: "Greece {GRC.2009.r2} in 2009 and {GRC.2025.r2} in 2025."
+  ko:
+    term: R2 재정적자
+    what: 정부가 한 해에 거둔 수입보다 더 지출한 금액입니다. 이자도 지출에 포함합니다.
+    why: 적자는 차입으로 메워야 하므로 적자가 크면 부채가 빨리 늘어납니다.
+    calc: 일반정부 재정수지 ÷ GDP × 100. 0보다 작으면 적자입니다.
+    thr: GDP의 −5% 이하면 신호가 발생합니다. EU 마스트리히트 기준은 −3%입니다.
+    ex: "그리스는 2009년 {GRC.2009.r2}, 2025년 {GRC.2025.r2|을} 기록했습니다."
+
+w_r3:
+  src: [{src: imf.weo, series: [GGXWDG_NGDP, GGXCNL_NGDP, GGXONLB_NGDP, NGDP]}]
+  en:
+    term: R3 Debt snowball
+    what: The primary balance needed to keep the debt ratio steady, minus the actual one.
+    why: If interest beats growth, debt grows by itself unless the budget saves before interest.
+    calc: In % of GDP, from WEO debt, balances and GDP.
+    formula: "pb* = d₋₁ × (i − g) / (1 + g);  gap = pb* − pb"
+    thr: On at a gap of 1% of GDP or more (convention).
+    ex: "Greece 2009: i {GRC.2009.i}, g {GRC.2009.g}, pb* {GRC.2009.pbstar}, gap {GRC.2009.r3}."
+  ko:
+    term: R3 부채 눈덩이
+    what: 부채비율을 그대로 유지하는 데 필요한 기초재정수지에서 실제 기초재정수지를 뺀 값입니다.
+    why: 이자율이 성장률보다 높으면 기초재정수지 흑자를 내지 않는 한 부채가 저절로 불어납니다.
+    calc: GDP 대비 %. WEO의 부채, 재정수지, 자국 통화 GDP로 계산합니다.
+    formula: "pb* = d₋₁ × (i − g) / (1 + g);  격차 = pb* − pb"
+    thr: 격차가 GDP의 1% 이상이면 신호가 발생합니다(관행).
+    ex: "2009년 그리스: i {GRC.2009.i}, g {GRC.2009.g}, pb* {GRC.2009.pbstar}, 격차 {GRC.2009.r3}."
+
+w_r4:
+  src: [{src: imf.bop}, {src: imf.weo, series: [BCA_NGDPD]}, {src: eu.mip}]
+  en:
+    term: R4 Current account
+    what: The current account balance as a share of GDP, averaged over three years.
+    why: A lasting deficit means the country spends more than it earns and borrows abroad.
+    calc: Mean of three years. money-flow's figure; the WEO before it starts.
+    thr: On at −4% or below, the EU macroeconomic imbalance procedure (MIP) threshold.
+    ex: "Greece {GRC.2008.r4} in 2008. Korea {KOR.1996.r4} in 1996."
+  ko:
+    term: R4 경상수지
+    what: 경상수지를 GDP로 나눈 값의 3년 평균입니다.
+    why: 적자가 이어지면 벌어들이는 것보다 많이 지출하고, 그 차이를 해외에서 차입한다는 뜻입니다.
+    calc: 세 해 값의 평균입니다. money-flow의 국제수지 값을 쓰고, 그 계열이 시작하기 전은 WEO 값을 씁니다.
+    thr: −4% 이하면 신호가 발생합니다. EU 거시경제 불균형 절차(MIP) 지표표의 기준치입니다.
+    ex: "2008년 그리스 {GRC.2008.r4}, 1996년 한국 {KOR.1996.r4}."
+
+w_r5:
+  src: [{src: imf.iip}, {src: imf.weo, series: [NGDPD]}, {src: eu.mip}]
+  en:
+    term: R5 Net IIP
+    what: What residents own abroad minus what foreigners own here, ÷ GDP.
+    why: A large negative position is foreign money that can leave or must be paid back.
+    calc: Year end. money-flow's net IIP; before it starts, IMF IIP ÷ WEO dollar GDP.
+    thr: On at −35% or below, the EU MIP scoreboard threshold.
+    ex: "Greece {GRC.2025.r5} in 2025. Korea {KOR.2025.r5}."
+  ko:
+    term: R5 순대외금융자산 (net IIP)
+    what: 거주자가 해외에 보유한 자산에서 외국인이 국내에 보유한 자산을 뺀 값을 GDP로 나눈 비율입니다.
+    why: 크게 마이너스면 언제든 유출되거나 상환해야 할 외국 자금이 많다는 뜻입니다.
+    calc: 연말 기준입니다. money-flow의 순대외금융자산을 쓰고, 그 이전 기간은 IMF IIP를 WEO 달러 GDP로 나눈 값을 씁니다.
+    thr: −35% 이하면 신호가 발생합니다. EU MIP 지표표의 기준치입니다.
+    ex: "2025년 그리스 {GRC.2025.r5}, 한국 {KOR.2025.r5}."
+
+w_r6:
+  src: [{src: bis.cbs}, {src: imf.irfcl}]
+  en:
+    term: R6 Liquidity (A2)
+    what: "BIS banks' claims on the country due within a year (all currencies, long-term claims falling due included), ÷ A2's reserve base: net reserves, floored at a tenth of gross reserves."
+    why: Reserves pay lenders who stop rolling over. Above 100%, they would not be enough.
+    calc: Year-end A2 from money-flow. Not applicable to euro members, reserve-currency issuers and Canada.
+    thr: On at 100% or more, the Greenspan–Guidotti rule.
+    ex: "Korea {KOR.2025.r6} in 2025. Türkiye {TUR.2018.r6} in 2018."
+  ko:
+    term: R6 외화유동성(A2)
+    what: "해당 국가에 대한 BIS 은행의 잔존만기 1년 이내 채권(전체 통화, 1년 안에 만기가 도래하는 장기 채권 포함)을 A2의 외환보유액 기준으로 나눈 값입니다. 외환보유액 기준은 순외환보유액이며, 총외환보유액의 10분의 1을 하한으로 둡니다."
+    why: 외국 대주가 만기 연장을 멈추면 외환보유액으로 상환해야 합니다. 이 비율이 100%를 넘으면 보유액이 부족합니다.
+    calc: money-flow(방법론 1.4)의 연말 A2. 유로 회원국, 준비통화 발행국, 캐나다에는 적용하지 않습니다.
+    thr: 100% 이상이면 신호가 발생합니다. 그린스펀-기도티 규칙을 따른 기준입니다.
+    ex: "2025년 한국 {KOR.2025.r6}, 2018년 튀르키예 {TUR.2018.r6}."
+
+w_r7:
+  src: [{src: oecd.ltr}]
+  en:
+    term: R7 Spread
+    what: The 10-year government bond yield minus the benchmark's.
+    why: Lenders who fear not being repaid ask more. A wide spread means borrowing is closing.
+    calc: Monthly OECD rates via FRED. Yearly average to count; the latest 12 months for now.
+    thr: On at 4 percentage points or more, a common distress marker.
+    ex: "Greece {GRC.2011.r7:pp} in 2011. Italy {ITA.2012.r7:pp} in 2012."
+  ko:
+    term: R7 국채 스프레드
+    what: 10년 만기 국채 금리에서 기준국 금리를 뺀 값입니다.
+    why: 상환을 받지 못할 위험이 커지면 대주는 더 높은 금리를 요구합니다. 스프레드가 벌어지면 차입 비용이 오르거나 차입이 막힙니다.
+    calc: OECD 장기금리 월별 계열(FRED 경유)입니다. 집계할 때는 연평균, 현재 값은 최근 12개월 평균입니다.
+    thr: 4%p(400bp) 이상이면 신호가 발생합니다. 흔히 쓰는 위기 지표입니다.
+    ex: "2011년 그리스 {GRC.2011.r7:pp}, 2012년 이탈리아 {ITA.2012.r7:pp}."
+
+# ---------------------------------------------------------------- variables and axis labels
+w_debt:
+  src: [{src: imf.weo, series: [GGXWDG_NGDP]}]
+  en:
+    term: General government gross debt
+    what: All debt of central, state and local government and social security funds.
+    why: It is what the government must repay or roll over.
+    calc: Bonds, loans and other debt liabilities at the year end, ÷ GDP.
+    ex: "Japan {JPN.2025.r1} of GDP in 2025."
+  ko:
+    term: 일반정부 총부채
+    what: 중앙정부, 지방정부, 사회보장기금의 부채를 모두 더한 값입니다.
+    why: 정부가 상환하거나 차환해야 하는 채무입니다.
+    calc: 연말 국채, 차입금 등 부채 ÷ GDP.
+    ex: "2025년 일본의 재정수지는 GDP의 {JPN.2025.r1}입니다."
+
+w_balance:
+  src: [{src: imf.weo, series: [GGXCNL_NGDP]}]
+  en:
+    term: Overall fiscal balance
+    what: Government revenue minus all spending, interest included.
+    why: A deficit is new borrowing.
+    calc: General government net lending (+) or borrowing (−) ÷ GDP.
+    ex: "Korea {KOR.2025.r2} in 2025."
+  ko:
+    term: 재정수지
+    what: 정부 수입에서 이자를 포함한 모든 지출을 뺀 값입니다.
+    why: 적자는 곧 새로운 부채입니다.
+    calc: 일반정부 순대출(+) 또는 순차입(−) ÷ GDP.
+    ex: "2025년 한국 {KOR.2025.r2}."
+
+w_primary:
+  src: [{src: imf.weo, series: [GGXONLB_NGDP]}]
+  en:
+    term: Primary balance (pb)
+    what: The budget balance before interest payments.
+    why: It is the part policy controls today. Interest depends on past debt.
+    calc: Overall balance plus interest paid, ÷ GDP.
+    ex: "Greece 2009: {GRC.2009.pb}, with interest of {GRC.2009.interest} of GDP."
+  ko:
+    term: 기초재정수지
+    what: 이자 지급 전의 재정수지입니다.
+    why: 현재의 정책으로 조정할 수 있는 부분입니다. 이자는 과거에 누적된 부채에 좌우됩니다.
+    calc: 재정수지에 이자 지급을 더한 값 ÷ GDP.
+    ex: "2009년 그리스 {GRC.2009.pb}. 이자는 GDP의 {GRC.2009.interest|을} 차지했습니다."
+
+w_i:
+  src: [{src: imf.weo, series: [GGXCNL_NGDP, GGXONLB_NGDP, GGXWDG_NGDP, NGDP]}]
+  en:
+    term: Interest rate on debt (i)
+    what: Interest the government paid this year divided by its debt at the end of last year.
+    why: The higher it is against growth, the faster debt snowballs.
+    calc: (Primary balance − overall balance) × GDP ÷ last year's debt.
+    formula: "i = (pb − ob) × Y ÷ (d₋₁ × Y₋₁)"
+    ex: "Greece {GRC.2009.i} in 2009. Italy {ITA.2012.i} in 2012."
+  ko:
+    term: 부채 이자율(i)
+    what: 올해 지급한 이자를 지난해 말 부채로 나눈 값입니다.
+    why: 성장률보다 높을수록 부채가 빨리 불어납니다.
+    calc: (기초재정수지 − 재정수지) × GDP ÷ 지난해 부채.
+    formula: "i = (pb − ob) × Y ÷ (d₋₁ × Y₋₁)"
+    ex: "2009년 그리스 {GRC.2009.i}, 2012년 이탈리아 {ITA.2012.i}."
+
+w_g:
+  src: [{src: imf.weo, series: [NGDP]}]
+  en:
+    term: Nominal GDP growth (g)
+    what: Growth of GDP at current prices, that is real growth plus inflation.
+    why: Debt is measured against GDP, so growth shrinks the ratio.
+    calc: GDP in national currency this year ÷ last year − 1.
+    formula: "g = Y ÷ Y₋₁ − 1"
+    ex: "Greece {GRC.2009.g} in 2009."
+  ko:
+    term: 명목 성장률(g)
+    what: 경상가격 GDP의 증가율입니다. 실질 성장률에 물가 상승률을 더한 값과 비슷합니다.
+    why: 부채는 GDP와 비교해 측정하므로 경제가 성장하면 비율이 낮아집니다.
+    calc: 올해 자국 통화 GDP ÷ 지난해 − 1.
+    formula: "g = Y ÷ Y₋₁ − 1"
+    ex: "2009년 그리스 {GRC.2009.g}."
+
+w_pbstar:
+  src: [{src: imf.weo, series: [GGXWDG_NGDP, NGDP]}]
+  en:
+    term: Debt-stabilising primary balance (pb*)
+    what: The primary balance that would keep debt ÷ GDP unchanged this year.
+    why: Below it, the ratio rises.
+    calc: Last year's debt ratio × (i − g) ÷ (1 + g).
+    formula: "pb* = d₋₁ × (i − g) / (1 + g)"
+    ex: "Greece {GRC.2009.pbstar} in 2009."
+  ko:
+    term: 부채안정 기초재정수지(pb*)
+    what: 올해 부채비율을 유지하는 데 필요한 기초재정수지입니다.
+    why: 이보다 낮으면 비율이 상승합니다.
+    calc: 지난해 부채비율 × (i − g) ÷ (1 + g).
+    formula: "pb* = d₋₁ × (i − g) / (1 + g)"
+    ex: "2009년 그리스 {GRC.2009.pbstar}."
+
+w_ca:
+  src: [{src: imf.bop}, {src: imf.weo, series: [BCA_NGDPD]}]
+  en:
+    term: Current account
+    what: Exports and income received from abroad minus imports and income paid abroad.
+    why: A deficit must be financed by borrowing or selling assets abroad.
+    calc: Four quarters to December ÷ GDP, from money-flow; the WEO before money-flow's series starts.
+    ex: "Korea {KOR.1996.ca} in 1996 and {KOR.2025.ca} in 2025."
+  ko:
+    term: 경상수지
+    what: 수출과 해외에서 받은 소득에서 수입과 해외로 지급한 소득을 뺀 값입니다.
+    why: 적자는 해외 차입이나 자산 매각으로 메워야 합니다.
+    calc: 12월까지 네 분기 합계 ÷ GDP. money-flow 값을 쓰고, 그 계열이 시작하기 전은 WEO 값을 씁니다.
+    ex: "한국은 1996년 {KOR.1996.ca}, 2025년 {KOR.2025.ca}."
+
+w_niip:
+  src: [{src: imf.iip}]
+  en:
+    term: Net international investment position (net IIP)
+    what: Everything residents own abroad minus everything foreigners own in the country.
+    why: It is a country's net worth against the rest of the world.
+    calc: Gross external assets minus gross external liabilities, ÷ GDP.
+    ex: "Japan {JPN.2025.r5}, Türkiye {TUR.2025.r5} in 2025."
+  ko:
+    term: 순대외금융자산 (net IIP)
+    what: 거주자가 해외에 보유한 모든 자산에서 외국인이 국내에 보유한 모든 자산을 뺀 값입니다.
+    why: 한 나라가 세계에 대해 보유한 순자산입니다.
+    calc: 대외금융자산 − 대외금융부채, ÷ GDP.
+    ex: "2025년 일본 {JPN.2025.r5}, 튀르키예 {TUR.2025.r5}."
+
+w_a2:
+  src: [{src: bis.cbs}, {src: imf.irfcl}]
+  en:
+    term: "A2: BIS banks' claims due within a year ÷ reserve base"
+    what: "International claims of BIS reporting banks on the country with up to a year to run, all currencies and sectors, over A2's reserve base. Not the country's short-term external debt: it counts long-term claims falling due and only bank creditors."
+    why: It compares what could leave quickly with what is there to pay it.
+    calc: "BIS consolidated claims up to one year (bank type 4O) ÷ A2's reserve base: IMF official reserves less net payments due within a year, never below a tenth of gross reserves."
+    ex: "Argentina {ARG.2019.r6} in 2019."
+  ko:
+    term: "A2: BIS 은행의 잔존만기 1년 이내 채권 ÷ 외환보유액 기준"
+    what: "BIS 보고은행이 해당 국가에 대해 보유한 잔존만기 1년 이내 국제 채권(전체 통화·전체 부문)을 A2의 외환보유액 기준으로 나눈 값입니다. 해당 국가의 단기외채가 아닙니다. 1년 안에 만기가 돌아오는 장기 채권을 포함하고, 채권자로는 은행만 집계하기 때문입니다."
+    why: 단기간에 유출될 수 있는 자금과 이를 상환할 재원을 비교합니다.
+    calc: "잔존만기 1년 이내 BIS 연결 기준 채권(은행 유형 4O)을 A2의 외환보유액 기준으로 나눈 값입니다. 외환보유액 기준은 IMF 공식 외환보유액에서 1년 이내 순지급 예정액을 뺀 값이며, 총외환보유액의 10분의 1 아래로 내려가지 않습니다."
+    ex: "2019년 아르헨티나 {ARG.2019.r6}."
+
+w_yield:
+  src: [{src: oecd.ltr}]
+  en:
+    term: 10-year government bond yield
+    what: The interest rate markets ask to lend to the government for about ten years.
+    why: It sets the cost of new debt.
+    calc: OECD long-term interest rate, monthly average.
+    ex: "Portugal's spread over Germany was {PRT.2012.r7:pp} in 2012."
+  ko:
+    term: 10년 만기 국채 금리
+    what: 시장이 정부에 10년가량 자금을 대출해 주며 요구하는 금리입니다.
+    why: 새로운 차입의 비용을 정합니다.
+    calc: OECD 장기금리, 월평균.
+    ex: "2012년 포르투갈의 독일 대비 스프레드는 {PRT.2012.r7:pp|을} 기록했습니다."
+
+w_bench:
+  src: [{src: oecd.ltr}]
+  en:
+    term: Benchmark
+    what: The safe borrower the spread is measured against. Germany for EU members, the United States for the others.
+    why: Subtracting its yield removes the part of rates every borrower shares.
+    calc: The same OECD series for the benchmark. The benchmark itself has R7 not applicable.
+    ex: "Mexico {MEX.2025.r7:pp} over the United States in 2025."
+  ko:
+    term: 기준국
+    what: 스프레드를 산출할 때 비교하는 안전한 차입자입니다. EU 회원국은 독일, 나머지는 미국입니다.
+    why: 기준국 금리를 빼면 모든 나라에 공통인 금리 움직임이 제거됩니다.
+    calc: 기준국에도 같은 OECD 계열을 씁니다. 기준국 자신에게는 R7을 적용하지 않습니다.
+    ex: "2025년 멕시코의 미국 대비 스프레드 {MEX.2025.r7:pp}."
+
+w_pctgdp:
+  src: [{src: imf.weo, series: [NGDP, NGDPD]}]
+  en:
+    term: "% of GDP"
+    what: A value divided by the economy's yearly output, gross domestic product (GDP).
+    why: It compares economies of any size, and a debt with the income that services it.
+    calc: Value ÷ GDP of the same year × 100.
+    ex: "Korea's government debt was {KOR.2025.r1} of GDP in 2025."
+  ko:
+    term: GDP 대비 %
+    what: 어떤 값을 한 해 생산, 곧 국내총생산(GDP)으로 나눈 비율입니다.
+    why: 크기가 다른 나라를 비교하고, 부채를 상환 재원인 소득과 비교합니다.
+    calc: 값 ÷ 같은 해 GDP × 100.
+    ex: "2025년 한국 정부부채는 GDP의 {KOR.2025.r1|을} 차지했습니다."
+
+w_pp:
+  src: []
+  en:
+    term: Percentage point (pp)
+    what: The difference between two percentages.
+    why: A yield of 7% against 3% is 4 percentage points apart, not 133%.
+    calc: One rate minus the other.
+    ex: "Greece's spread was {GRC.2012.r7:pp} in 2012."
+  ko:
+    term: "%p (percentage point)"
+    what: 두 백분율의 차이입니다.
+    why: 7% 금리와 3% 금리의 차이는 4%p입니다. 133%가 아닙니다.
+    calc: 한 금리에서 다른 금리를 뺍니다.
+    ex: "2012년 그리스 스프레드는 {GRC.2012.r7:pp|을} 기록했습니다."
+
+w_threshold:
+  src: []
+  en:
+    term: Threshold
+    what: The level each rule is tested against, drawn as a dashed line.
+    why: It turns a series into a plain on or off.
+    calc: Move it with the rule's slider. Years on the wrong side are marked red.
+    thr: Each rule's default is in its own tooltip.
+    ex: "R1: Greece {GRC.2009.r1} in 2009 against 90%."
+  ko:
+    term: 기준선
+    what: 규칙마다 비교하는 기준값입니다. 점선으로 그립니다.
+    why: 계열을 신호 발생과 신호 없음으로 나눕니다.
+    calc: 규칙의 슬라이더로 옮깁니다. 기준을 넘은 해는 빨갛게 표시합니다.
+    thr: 규칙마다 기본값은 그 규칙의 설명에 있습니다.
+    ex: "R1: 2009년 그리스 {GRC.2009.r1}, 기준 90%."
+
+# ---------------------------------------------------------------- episode types and facilities
+w_ep_imf:
+  src: [{src: imf.lending}]
+  en:
+    term: IMF programme
+    what: A loan from the International Monetary Fund under a Stand-By Arrangement or Extended Fund Facility, with conditions.
+    why: Countries ask for one when markets no longer lend on acceptable terms.
+    calc: Shaded from Board approval to the end or cancellation date.
+    ex: "{ep.imf} programmes in these economies since 1990."
+  ko:
+    term: IMF 구제금융
+    what: 국제통화기금(IMF)이 스탠드바이협약이나 확대신용제도로 조건을 붙여 차입하는 자금입니다.
+    why: 시장이 수용할 만한 조건으로 더는 자금을 공급하지 않을 때 요청합니다.
+    calc: 이사회 승인일부터 종료일이나 취소일까지 음영을 넣습니다.
+    ex: "1990년 이후 이 경제들에서 {ep.imf}건."
+
+w_ep_eu:
+  src: [{src: eu.esm}]
+  en:
+    term: Euro-area or EU programme
+    what: A rescue loan from euro-area governments or the EU, often beside the IMF.
+    why: For a euro member it does the job the IMF does elsewhere.
+    calc: Shaded from approval to the end of the programme.
+    ex: "{ep.eu} programmes in these economies."
+  ko:
+    term: 유로존·EU 구제금융
+    what: 유로존 정부들이나 EU가 지원하는 구제 자금입니다. IMF와 함께 지원하는 경우가 많습니다.
+    why: 유로 회원국에는 다른 나라에서 IMF가 하는 역할을 합니다.
+    calc: 승인일부터 프로그램 종료일까지 음영을 넣습니다.
+    ex: "이 경제들에서 {ep.eu}건."
+
+w_ep_default:
+  src: [{src: boc.boe}]
+  en:
+    term: Default or restructuring
+    what: The government missed payments, or made its creditors accept less than they were owed.
+    why: It is the crisis the rules try to see coming.
+    calc: Spells from the Bank of Canada and Bank of England sovereign default database.
+    ex: "{ep.default} spells in these economies."
+  ko:
+    term: 채무불이행·채무재조정
+    what: 정부가 채무를 제때 상환하지 못했거나 채권자가 손실을 부담하도록 한 일입니다.
+    why: 다른 규칙들이 미리 알아내려는 바로 그 위기입니다.
+    calc: 캐나다·영국 중앙은행의 국가채무불이행 데이터베이스에서 기간을 가져옵니다.
+    ex: "이 경제들에서 {ep.default}건."
+
+w_ep_prec:
+  src: [{src: imf.lending}]
+  en:
+    term: Precautionary line
+    what: An IMF credit line a country with sound policies can draw on if needed. Most are never drawn.
+    why: It is insurance against a shock, not a sign of distress.
+    calc: Drawn with a light hatch and left out of the validation.
+    ex: "{ep.precautionary} lines in these economies."
+  ko:
+    term: 예방적 크레딧라인
+    what: 정책 여건이 건전한 나라가 필요할 때 인출할 수 있는 IMF 신용한도입니다. 대부분 실제로 인출하지 않습니다.
+    why: 충격에 대비한 보험이지 위기의 표시가 아닙니다.
+    calc: 옅은 빗금으로 그리고 검증에서 제외합니다.
+    ex: "이 경제들에서 {ep.precautionary}건입니다."
+
+w_f_sba:
+  src: [{src: imf.lending}]
+  en: {term: Stand-By Arrangement (SBA), what: "The IMF's standard loan for a short-term balance-of-payments problem, usually one to three years.", why: "Money is paid out in stages as conditions are met."}
+  ko: {term: 스탠드바이협약 (SBA), what: "단기 국제수지 문제에 쓰는 IMF의 기본 대출입니다. 기간은 보통 1~3년입니다.", why: "조건을 지키는 데 따라 나눠서 지급합니다."}
+w_f_eff:
+  src: [{src: imf.lending}]
+  en: {term: Extended Fund Facility (EFF), what: "An IMF loan for deeper, longer problems, usually three to four years.", why: "It comes with structural reforms and a longer repayment."}
+  ko: {term: 확대신용제도(EFF), what: "구조적이고 오래가는 문제에 쓰는 IMF 대출입니다. 기간은 보통 3~4년입니다.", why: "구조 개혁 조건이 붙고 상환 기간이 더 깁니다."}
+w_f_fcl:
+  src: [{src: imf.lending}]
+  en: {term: Flexible Credit Line (FCL), what: "An IMF line for countries with very strong policies, with no conditions after approval.", why: "Precautionary: it insures, it does not rescue."}
+  ko: {term: 탄력적 크레딧라인(FCL), what: "정책 여건이 매우 건전한 나라에 주는 IMF 신용한도입니다. 승인 뒤에는 조건이 없습니다.", why: "예방적 장치입니다. 구제금융이 아니라 보험입니다."}
+w_f_pll:
+  src: [{src: imf.lending}]
+  en: {term: Precautionary and Liquidity Line (PLL), what: "An IMF line for countries with sound policies and some weak spots.", why: "Precautionary: it insures, it does not rescue."}
+  ko: {term: 예방적·유동성지원라인 (PLL), what: "정책 여건이 건전하지만 일부 취약 부문이 있는 나라에 주는 IMF 신용한도입니다.", why: "예방적 장치입니다. 구제금융이 아니라 보험입니다."}
+w_f_sll:
+  src: [{src: imf.lending}]
+  en: {term: Short-term Liquidity Line (SLL), what: "A revolving IMF line for brief liquidity needs of strong economies.", why: "Precautionary: it insures, it does not rescue."}
+  ko: {term: 단기유동성라인 (SLL), what: "건전한 경제의 일시적 유동성 수요를 위한 IMF 회전 신용한도입니다.", why: "예방적 장치입니다. 구제금융이 아니라 보험입니다."}
+w_f_pci:
+  src: [{src: imf.lending}]
+  en: {term: Policy Coordination Instrument (PCI), what: "IMF monitoring of a policy programme without any loan.", why: "It signals policy support; no money changes hands."}
+  ko: {term: 정책 조정 수단(PCI), what: "자금을 지원하지 않고 IMF가 정책 계획을 점검하는 장치입니다.", why: "정책을 지지한다는 신호일 뿐 자금은 오가지 않습니다."}
+w_f_glf:
+  src: [{src: eu.esm}]
+  en: {term: Greek Loan Facility (GLF), what: "The 2010 bilateral loans of euro-area countries to Greece, pooled by the European Commission.", why: "The first euro-area rescue, beside an IMF programme."}
+  ko: {term: 그리스 대출 기금(GLF), what: "2010년 유로존 국가들이 그리스에 제공한 양자 대출입니다. 집행위원회가 묶어 관리했습니다.", why: "IMF와 함께 한 첫 유로존 구제금융입니다."}
+w_f_efsf:
+  src: [{src: eu.esm}]
+  en: {term: European Financial Stability Facility (EFSF), what: "A temporary euro-area rescue fund set up in 2010.", why: "It lent to Ireland, Portugal and Greece."}
+  ko: {term: 유럽재정안정기금(EFSF), what: "2010년에 만든 한시적 유로존 구제기금입니다.", why: "아일랜드, 포르투갈, 그리스에 자금을 지원했습니다."}
+w_f_efsm:
+  src: [{src: eu.esm}]
+  en: {term: European Financial Stabilisation Mechanism (EFSM), what: "EU loans raised by the European Commission against the EU budget.", why: "It lent to Ireland and Portugal beside the EFSF, and a bridge loan to Greece in 2015."}
+  ko: {term: 유럽재정안정메커니즘(EFSM), what: "EU 집행위원회가 EU 예산을 담보로 조달해 대출하는 자금입니다.", why: "EFSF와 함께 아일랜드와 포르투갈을 지원했고, 2015년 그리스에 연결 대출을 제공했습니다."}
+w_f_esm:
+  src: [{src: eu.esm}]
+  en: {term: European Stability Mechanism (ESM), what: "The permanent euro-area rescue fund, since 2012.", why: "It lent to Greece, Cyprus and Spain's banks."}
+  ko: {term: 유럽안정메커니즘(ESM), what: "2012년부터 운영하는 상설 유로존 구제기금입니다.", why: "그리스, 키프로스, 스페인 은행 부문에 자금을 지원했습니다."}
+w_f_eubop:
+  src: [{src: eu.esm}]
+  en: {term: EU balance-of-payments assistance, what: "EU loans to member states outside the euro in external financing trouble.", why: "Hungary, Latvia and Romania drew on it from 2008."}
+  ko: {term: EU 국제수지 지원, what: "대외 자금난에 빠진 비유로 EU 회원국에 주는 EU 대출입니다.", why: "2008년부터 헝가리, 라트비아, 루마니아가 지원을 받았습니다."}
+
+# ---------------------------------------------------------------- the count and its settings
+w_count:
+  src: []
+  en:
+    term: Signal count (k of n)
+    what: Rules on in a year (k), out of the rules with data that apply and are switched on (n).
+    why: Several signs at once mark more trouble than one alone.
+    calc: Count the rules on. A missing rule is never counted as off.
+    thr: The threshold is reached when k reaches K.
+    ex: "Greece 2009: {GRC.2009.count}. Korea 2025: {KOR.2025.count}."
+  ko:
+    term: 신호 수(k/n)
+    what: 한 해에 신호가 발생한 규칙의 수(k)입니다. 자료가 있고 적용 대상이며 선택한 규칙(n) 가운데 집계합니다.
+    why: 신호가 한꺼번에 여럿이면 하나일 때보다 위기에 가깝습니다.
+    calc: 신호가 발생한 규칙을 집계합니다. 자료가 없는 규칙은 신호 없음으로 보지 않습니다.
+    thr: k가 K에 이르면 신호 기준에 도달합니다.
+    ex: "2009년 그리스: {GRC.2009.count}. 2025년 한국: {KOR.2025.count}."
+
+w_k:
+  src: []
+  en:
+    term: Signal threshold (K)
+    what: The count at which a year is marked as threshold reached.
+    why: A lower K catches more crises but gives more false signals.
+    calc: Threshold reached when k ≥ K.
+    thr: Default 4, more than half of the seven rules.
+    ex: "With K = 4, {val.hits:int} of {val.scored:int} episodes reached it in the years before."
+  ko:
+    term: 신호 기준(K)
+    what: 그해를 기준 도달로 표시하는 신호 수입니다.
+    why: K를 낮추면 위기를 더 많이 포착하지만 오신호도 늘어납니다.
+    calc: k ≥ K이면 기준 도달입니다.
+    thr: 기본값은 4입니다. 규칙 일곱 개의 절반이 넘습니다.
+    ex: "K = 4이면 위기 {val.scored:int}건 가운데 {val.hits:int}건 앞에서 기준에 도달했습니다."
+
+w_missing:
+  src: []
+  en:
+    term: Missing, not off
+    what: A rule with no data for that economy and year.
+    why: Counting it as off would make a country with thin data look safe.
+    calc: Left out of n, shown as a gap.
+    ex: "Korea 1996: {KOR.1996.count}. The WEO has no Korean fiscal series before 2012."
+  ko:
+    term: 자료 없음(신호 없음 아님)
+    what: 그 경제의 그해 자료가 없는 규칙입니다.
+    why: 신호 없음으로 처리하면 자료가 빈약한 나라가 안전해 보입니다.
+    calc: n에서 제외하고 빈칸으로 표시합니다.
+    ex: "1996년 한국의 값은 {KOR.1996.count}입니다. WEO에는 2012년 이전 한국 재정 계열이 없습니다."
+
+w_na:
+  src: []
+  en:
+    term: Not applicable
+    what: A rule that cannot measure its risk for that economy.
+    why: A euro member's reserves are pooled in the euro system, and Germany cannot have a spread over itself.
+    calc: Greyed out and left out of n.
+    ex: "Greece: R6 not applicable. Germany: R7 not applicable."
+  ko:
+    term: 적용 안 함
+    what: 그 경제에서는 측정하려는 위험을 측정할 수 없는 규칙입니다.
+    why: 유로 회원국의 외환보유액은 유로 체제 안에서 함께 씁니다. 독일은 자신과의 스프레드가 없습니다.
+    calc: 회색으로 표시하고 n에서 제외합니다.
+    ex: "그리스는 R6, 독일은 R7을 적용하지 않습니다."
+
+w_proj:
+  src: [{src: imf.weo}]
+  en:
+    term: Projection
+    what: IMF staff forecasts in the World Economic Outlook for the current year and the next.
+    why: They show where policy is heading, but they are not data yet.
+    calc: Drawn dashed and hatched. Never counted in the validation.
+    ex: "Greece's debt {GRC.2027.r1} in 2027 (projection)."
+  ko:
+    term: 전망치
+    what: 세계경제전망(WEO)에 실린 IMF 직원의 올해와 내년 예측입니다.
+    why: 정책 방향을 나타내지만 아직 실적은 아닙니다.
+    calc: 점선과 빗금으로 표시합니다. 검증에는 포함하지 않습니다.
+    ex: "그리스 정부부채 2027년 {GRC.2027.r1}(전망)."
+
+w_vintage:
+  src: [{src: imf.weo}]
+  en:
+    term: Latest vintage
+    what: Every year is read from the newest World Economic Outlook, revisions included.
+    why: Revisions unknown at the time make past signals look sharper than they were.
+    calc: Version 1. Version 2 will use the value first published for each year.
+    ex: "Greece's 2009 deficit is {GRC.2009.r2} in this vintage, far above what was reported in 2009."
+  ko:
+    term: 최신 판
+    what: 모든 해의 값은 가장 최근 세계경제전망에서 읽습니다. 사후 수정이 반영되어 있습니다.
+    why: 당시 알 수 없던 수정 때문에 과거 신호가 실제보다 뚜렷해 보입니다.
+    calc: 1판입니다. 2판은 연도별로 처음 공표된 값을 씁니다.
+    ex: "2009년 그리스 적자는 이 판에서 {GRC.2009.r2}입니다. 2009년 당시 보고치보다 훨씬 큽니다."
+
+# ---------------------------------------------------------------- validation
+w_hit:
+  src: [{src: imf.lending}, {src: eu.esm}, {src: boc.boe}]
+  en:
+    term: Hit rate
+    what: The share of episodes that reached the threshold in at least one of the 1–3 years before they started.
+    why: It says how often the rules would have signalled in time.
+    calc: Episodes with k ≥ K ÷ episodes with data in that window.
+    ex: "Default settings: {val.hits:int} of {val.scored:int} ({val.hit_rate})."
+  ko:
+    term: 적중률
+    what: 위기 시작 1~3년 전 가운데 한 해라도 신호 기준에 도달한 위기의 비율입니다.
+    why: 규칙이 얼마나 자주 제때 신호를 냈을지를 나타냅니다.
+    calc: 기준에 도달한 위기 ÷ 그 기간에 자료가 있는 위기.
+    ex: "기본 설정: {val.scored:int}건 중 {val.hits:int}건({val.hit_rate})."
+
+w_false:
+  src: []
+  en:
+    term: False-signal rate
+    what: The share of calm years in which the threshold is reached.
+    why: Too many false signals and nobody listens.
+    calc: Calm years with k ≥ K ÷ calm years.
+    ex: "Default settings: {val.alarms:int} of {val.calm:int} ({val.false_rate})."
+  ko:
+    term: 오신호율
+    what: 평온한 해 가운데 신호 기준에 도달한 해의 비율입니다.
+    why: 오신호가 잦으면 아무도 귀 기울이지 않습니다.
+    calc: k ≥ K인 평온한 해 ÷ 평온한 해.
+    ex: "기본 설정: {val.calm:int}해 중 {val.alarms:int}해({val.false_rate})."
+
+w_auroc:
+  src: []
+  en:
+    term: AUROC
+    what: The area under the ROC curve, the chance that a year just before an episode has a higher count than a calm year.
+    why: It scores the count without choosing K. 0.5 is a coin toss, 1 is perfect.
+    calc: Over every pair of pre-episode and calm years; ties count half.
+    ex: "Default settings: {val.auroc:num} on {val.pos_years:int} pre-episode years."
+  ko:
+    term: AUROC(ROC 곡선 아래 면적)
+    what: 위기 직전 해의 신호 수가 평온한 해보다 많을 확률입니다.
+    why: K를 고르지 않고 신호 수 자체를 평가합니다. 0.5는 동전 던지기, 1은 완벽입니다.
+    calc: 위기 직전 해와 평온한 해의 모든 쌍을 비교합니다. 값이 같으면 절반으로 계산합니다.
+    ex: "기본 설정: 위기 직전 {val.pos_years:int}개 연도에서 {val.auroc:num}."
+
+w_prewin:
+  src: []
+  en:
+    term: Pre-episode years
+    what: The 1–3 years before an episode starts, the positives of the validation.
+    why: A signal helps only if it comes before the crisis.
+    calc: Start year − 3 to start year − 1, within the data and before the projections.
+    ex: "{val.pos_years:int} such years with data."
+  ko:
+    term: 위기 직전 해
+    what: 위기가 시작하기 1~3년 전 기간입니다. 검증의 양성 사례입니다.
+    why: 신호는 위기보다 먼저 와야 쓸모가 있습니다.
+    calc: 시작 연도 −3년부터 −1년까지입니다. 자료가 있고 전망치가 아닌 해만 씁니다.
+    ex: "자료가 있는 해는 {val.pos_years:int}개입니다."
+
+w_calm:
+  src: []
+  en:
+    term: Calm years
+    what: Years more than three years from any episode of the economy, outside 2008–09 and 2020.
+    why: They are the years in which a signal would be false.
+    calc: Every other economy-year with data, projections left out.
+    ex: "{val.calm:int} calm economy-years."
+  ko:
+    term: 평온한 해
+    what: 그 경제의 어느 위기와도 3년 넘게 떨어져 있고 2008~09년과 2020년이 아닌 해입니다.
+    why: 이때 발생한 신호는 오신호입니다.
+    calc: 전망치는 제외하고 자료가 있는 나머지 경제·연도를 대상으로 합니다.
+    ex: "평온한 경제·연도는 {val.calm:int}개입니다."
+
+w_episodes:
+  src: [{src: imf.lending}, {src: eu.esm}, {src: boc.boe}]
+  en:
+    term: Episodes
+    what: Distress spells, an IMF programme, an EU programme or a default. Programmes that follow within a year count as one.
+    why: A follow-on programme is the same crisis, so counting it twice would flatter the rules.
+    calc: Merged from the episode list. Precautionary lines are left out.
+    ex: "{val.episodes:int} spells, {val.scored:int} with data before them."
+  ko:
+    term: 위기 사례
+    what: IMF 구제금융, EU 구제금융, 채무불이행이 이어진 기간입니다. 1년 안에 뒤따른 프로그램은 하나로 집계합니다.
+    why: 이어진 프로그램은 같은 위기이므로 두 번 집계하면 규칙이 실제보다 좋아 보입니다.
+    calc: 사례 목록을 합쳐 작성합니다. 예방적 크레딧라인은 제외합니다.
+    ex: "{val.episodes:int}건 가운데 직전 자료가 있는 것은 {val.scored:int}건입니다."
+
+# ---------------------------------------------------------------- institutions and sources
+w_imf:
+  src: [{src: imf.lending}]
+  en: {term: International Monetary Fund (IMF), what: "An institution of 191 member countries that lends to members in balance-of-payments trouble and publishes statistics.", why: "Its loans mark crises; its World Economic Outlook supplies the fiscal series."}
+  ko: {term: 국제통화기금(IMF), what: "191개 회원국으로 구성된 국제기구입니다. 국제수지 위기에 빠진 회원국에 자금을 지원하고 통계를 공표합니다.", why: "IMF 대출은 위기를 표시하고, 세계경제전망은 재정 계열을 제공합니다."}
+w_weo:
+  src: [{src: imf.weo}]
+  en: {term: World Economic Outlook (WEO), what: "The IMF's database published each April and October, with data from 1980 and staff projections.", why: "It has debt and balances for every economy on one definition."}
+  ko: {term: 세계경제전망(WEO), what: "IMF가 해마다 4월과 10월에 공표하는 자료입니다. 1980년부터의 실적과 IMF 직원의 전망을 담고 있습니다.", why: "모든 나라의 부채와 재정수지를 같은 정의로 담습니다."}
+w_oecd:
+  src: [{src: oecd.ltr}]
+  en: {term: OECD, what: "The Organisation for Economic Co-operation and Development, a club of 38 mostly high-income countries.", why: "It publishes comparable long-term interest rates for members and some partners."}
+  ko: {term: 경제협력개발기구(OECD), what: "주로 고소득국 38개국이 모인 국제기구입니다.", why: "회원국과 일부 협력국의 장기금리를 같은 기준으로 공표합니다."}
+w_fred:
+  src: [{src: oecd.ltr}]
+  en: {term: FRED, what: "Federal Reserve Economic Data, the St. Louis Fed's public database.", why: "It republishes the OECD long-term rates used for R7."}
+  ko: {term: FRED, what: "미국 세인트루이스 연방준비은행이 운영하는 공개 경제 자료입니다.", why: "R7에 쓰는 OECD 장기금리를 다시 싣습니다."}
+w_mip:
+  src: [{src: eu.mip}]
+  en: {term: EU macroeconomic imbalance procedure (MIP) scoreboard, what: "The European Commission's yearly table of indicators, each with an indicative threshold.", why: "R4 and R5 use two of its thresholds."}
+  ko: {term: EU 거시경제 불균형 절차(MIP) 지표표, what: "유럽연합 집행위원회가 해마다 공표하는 지표표입니다. 지표마다 기준치가 있습니다.", why: "R4와 R5는 그 기준 두 개를 씁니다."}
+w_gdp:
+  src: [{src: imf.weo, series: [NGDP, NGDPD]}]
+  en: {term: Gross domestic product (GDP), what: "The value of everything an economy produces in a year.", why: "It is the income from which debt is serviced."}
+  ko: {term: 국내총생산(GDP), what: "한 경제가 한 해 동안 생산한 모든 것의 가치입니다.", why: "부채를 상환하는 재원인 소득입니다."}
+w_bis:
+  src: [{src: bis.cbs}]
+  en: {term: BIS, what: "The Bank for International Settlements, the central banks' bank in Basel.", why: "Its banking statistics show what foreign banks lend to each country."}
+  ko: {term: 국제결제은행(BIS), what: "스위스 바젤에 있는 중앙은행들의 은행입니다.", why: "BIS 국제은행통계는 외국 은행이 나라별로 대출한 금액을 나타냅니다."}

@@ -1,0 +1,10 @@
+# Only the app, the design system and the release store go into the build context.
+*
+!app/
+!design/
+!release/
+!Dockerfile
+app/node_modules/
+app/.next*/
+app/tsconfig.tsbuildinfo
+release/staging/

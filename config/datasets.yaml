@@ -1,0 +1,228 @@
+# Which slices of each raw dataset build_tables.py takes, and what each becomes.
+# Dataset ids are the collector's. BIS filters are on the code part of a 'CODE: Label' cell.
+# Layers: 0 core money, 1 bank money, 2 derived claims.
+
+stocks:
+  bis.CBTA:                       # central bank total assets, in US dollars (BIS converts)
+    measure: cb_assets
+    layer: 0
+    filter: {UNIT_MEASURE: USD}
+  bis.DSS:                        # international debt securities by issuer residence, US dollars (BIS-compiled; the bulk file has no domestic issues)
+    measure: ids_outstanding
+    layer: 2
+    sectors: {"1": all, "2": general_government, B: financial_corporations, J: non_financial_corporations}
+    filter: {FREQ: Q, ISSUER_NAT: 3P, ISSUER_BUS_ULT: "1", MARKET: C, ISSUE_TYPE: A, ISSUE_CUR_GROUP: A, ISSUE_CUR: TO1,
+             ISSUE_OR_MAT: A, ISSUE_RE_MAT: A, ISSUE_RATE: A, ISSUE_RISK: A, ISSUE_COL: A, MEASURE: [I, G],
+             ISSUER_BUS_IMM: ["1", "2", B, J]}
+  bis.TC:                         # credit to the private non-financial sector, all lenders, market value, US dollars
+    measure: credit_private
+    layer: 1
+    filter: {TC_BORROWERS: P, TC_LENDERS: A, VALUATION: M, UNIT_TYPE: USD, TC_ADJUST: A}
+  bis.GLI:                        # foreign-currency credit to non-banks (global liquidity), amounts in the currency itself
+    measure: fx_credit
+    layer: 2
+    filter: {CURR_DENOM: [USD, EUR, JPY], BORROWERS_SECTOR: N, LENDERS_SECTOR: A, L_POS_TYPE: I,
+             L_INSTR: [B, D, G], UNIT_MEASURE: [USD, EUR, JPY]}
+    instruments: {B: total, D: debt_securities, G: loans}
+  imf.MFS_MA:                     # monetary aggregates, national currency
+    freq: [M]
+    indicators:
+      NDMBM_MAI: [monetary_base, 0]
+      CIC_OUTDCORP_MAI: [currency, 0]
+      BM_MAI: [broad_money, 1]
+  imf.IRFCL:                      # official reserve assets, US dollars; sector S1XS1311 = monetary authorities and central government (the total;
+    freq: [M]                     # S1X and S1311 alone are its parts, and the file carries all three)
+    sector: S1XS1311
+    indicators:
+      IRFCLDT1_IRFCL65_USD: [fx_reserves, 0]
+      IRFCLDT2_USD: [reserve_drains, 0]   # Section II: predetermined short-term net drains on foreign-currency assets within one year (negative = outflow); A2's denominator is Section I + II (method 1.4, R17)
+  imf.MFS_CBS:                    # central bank survey: claims on and liabilities to non-residents, national currency
+    freq: [M]
+    indicators:
+      S121_A_ACO_NRES_CBS: [cb_claims_nonres, 0]
+      S121_L_LT_NRES_CBS: [cb_liabilities_nonres, 0]
+  imf.MFS_ODC:                    # other depository corporations survey: the banks' claims on and liabilities to non-residents
+    freq: [M]
+    indicators:
+      ODCORP_A_ACO_NRES_ODCS: [banks_claims_nonres, 1]
+      ODCORP_L_LT_NRES_ODCS: [banks_liabilities_nonres, 1]
+  imf.COFER:                      # the world's allocated reserves by currency, US dollars (context for the reserves ribbon)
+    freq: [Q]
+    indicator: AFXRA
+    measure: reserves_by_currency
+    layer: 0
+  fred.observations:              # the United States (Fed H.4.1 and money stock); scale = units of the series in one
+    WALCL:     {economy: USA, measure: cb_assets,       layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    WRESBAL:   {economy: USA, measure: reserves_banks,  layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    WCURCIR:   {economy: USA, measure: currency,        layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    WTREGEN:   {economy: USA, measure: treasury_account, layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    RRPONTSYD: {economy: USA, measure: reverse_repo,    layer: 0, freq: D, currency: USD, scale: 1.0e+9}
+    SWPT:      {economy: USA, measure: swap_lines,      layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    WORAL:     {economy: USA, measure: repo_lending,    layer: 0, freq: W, currency: USD, scale: 1.0e+6}
+    BOGMBASE:  {economy: USA, measure: monetary_base,   layer: 0, freq: M, currency: USD, scale: 1.0e+9}
+    TOTRESNS:  {economy: USA, measure: reserves_banks,  layer: 0, freq: M, currency: USD, scale: 1.0e+9, detail: monthly}
+    M1SL:      {economy: USA, measure: m1,              layer: 1, freq: M, currency: USD, scale: 1.0e+9, detail: seasonally adjusted}
+    M2SL:      {economy: USA, measure: broad_money,     layer: 1, freq: M, currency: USD, scale: 1.0e+9, detail: M2, seasonally adjusted}
+    WM2NS:     {economy: USA, measure: broad_money,     layer: 1, freq: W, currency: USD, scale: 1.0e+9, detail: M2, weekly, not adjusted}
+    WRMFNS:    {economy: USA, measure: mmf_retail,      layer: 2, freq: W, currency: USD, scale: 1.0e+9}
+    ECBASSETSW: {economy: EMU, measure: cb_assets,      layer: 0, freq: W, currency: EUR, scale: 1.0e+6, detail: via FRED}
+    JPNASSETS: {economy: JPN, measure: cb_assets,       layer: 0, freq: M, currency: JPY, scale: 1.0e+8}
+  ecb.BSI:                        # the euro area's money, millions of euros, end of month
+    M.U2.Y.V.M10.X.1.U2.2300.Z01.E: {economy: EMU, measure: m1,          layer: 1, freq: M, currency: EUR, scale: 1.0e+6}
+    M.U2.Y.V.M20.X.1.U2.2300.Z01.E: {economy: EMU, measure: broad_money, layer: 1, freq: M, currency: EUR, scale: 1.0e+6, detail: M2}
+    M.U2.Y.V.M30.X.1.U2.2300.Z01.E: {economy: EMU, measure: m3,          layer: 1, freq: M, currency: EUR, scale: 1.0e+6}
+  ecb.ILM:                        # the Eurosystem's weekly balance sheet, millions of euros
+    W.U2.C.T000000.Z5.Z01: {economy: EMU, measure: cb_assets, layer: 0, freq: W, currency: EUR, scale: 1.0e+6}
+  ecos.StatisticSearch:           # Korea; 십억원 = 1e9 KRW, 천달러 = 1e3 USD
+    102Y002/ABA1/M@200310:    {economy: KOR, measure: monetary_base, layer: 0, freq: M, currency: KRW, scale: 1.0e+9, detail: monthly average}
+    161Y008/BBGA00/M@200310:  {economy: KOR, measure: broad_money,   layer: 1, freq: M, currency: KRW, scale: 1.0e+9, detail: M2, end of month}
+    161Y002/BBLA00/M@200310:  {economy: KOR, measure: m1,            layer: 1, freq: M, currency: KRW, scale: 1.0e+9, detail: monthly average}
+    171Y002/LE00000/M@200310: {economy: KOR, measure: lf,            layer: 1, freq: M, currency: KRW, scale: 1.0e+9, detail: Lf, end of month}
+    172Y002/X000000/M@200310: {economy: KOR, measure: l,             layer: 2, freq: M, currency: KRW, scale: 1.0e+9, detail: L, end of month}
+    732Y001/99/M@197101:      {economy: KOR, measure: fx_reserves,   layer: 0, freq: M, currency: USD, scale: 1.0e+3}
+    311Y001/1020000/Q@1994Q4: {economy: KOR, measure: iip_portfolio, layer: 2, freq: Q, currency: USD, scale: 1.0e+6, detail: assets}        # 국제투자대조표 증권투자, 백만달러 (V5 benchmark)
+    311Y001/2020000/Q@1994Q4: {economy: KOR, measure: iip_portfolio, layer: 2, freq: Q, currency: USD, scale: 1.0e+6, detail: liabilities}
+
+links:
+  bis.LBS:                        # residence: reporting country's banks' cross-border claims on each counterparty country
+    basis: residence
+    currency_dim: L_DENOM
+    sectors: {A: all, N: non-banks, B: banks}
+    # all instruments; loans and deposits (the bank ribbon, R5); debt securities (context: they are in portfolio debt);
+    # derivatives and other instruments (a pool of its own, shown as context with its own total; method 1.6 no longer sets it against the IIP derivatives item)
+    instruments: {A: bank, G: bank_loans, D: bank_debt, I: bank_other}
+    filter: {L_MEASURE: [S, F], L_POSITION: C, L_INSTR: [A, G, D, I], L_DENOM: [TO1, USD, EUR], L_CURR_TYPE: A, L_PARENT_CTY: 5J,
+             L_REP_BANK_TYPE: A, L_CP_SECTOR: [A, N, B], L_POS_TYPE: N}
+  bis.CBS:                        # nationality: foreign claims of each country's banks, immediate and ultimate-risk basis
+    basis: {F: nationality, U: ultimate_risk}
+    currency_dim: CURR_TYPE_BOOK
+    sectors: {A: all, B: banks, R: non-bank private, O: official}
+    filter: {L_MEASURE: S, CBS_BANK_TYPE: 4R, CBS_BASIS: [F, U], L_POSITION: C, L_INSTR: A, REM_MATURITY: A,
+             CURR_TYPE_BOOK: TO1, L_CP_SECTOR: [A, B, R, O]}
+  imf.PIP:                        # what each holder reports it holds, by issuer economy (all sectors)
+    match: {ACCOUNTING_ENTRY: A, SECTOR: S1, COUNTERPART_SECTOR: S1}
+    indicators:
+      P_TOTINV_P_USD: [portfolio, out]
+      P_F51_P_USD: [portfolio_equity, out]
+      P_F3_P_USD: [portfolio_debt, out]
+  imf.DIP:                        # direct investment positions, net: outward as the investor reports, inward as the host reports
+    indicators:
+      OTWD_D_NETAL_FALL_ALL: [fdi, out]
+      INWD_D_NETLA_FALL_ALL: [fdi, in]
+    # the host's all-investor total (counterpart G001) is the FDI total of a ladder (R6 v2); it arrives through the same rows
+
+  tic.files:                      # TIC SLT table 1: foreign residents' holdings of US long-term securities, monthly, millions of dollars
+    slt_table1.txt:
+      debtor: USA
+      channels: {for_lt_eqty: portfolio_equity, for_lt_treas: us_treasuries, for_lt_agcy: us_agency_bonds, for_lt_corp: us_corporate_bonds}
+      debt: [for_lt_treas, for_lt_agcy, for_lt_corp]   # their sum is portfolio_debt; positions with net purchases as published flows
+      total: Grand Total                               # all holders (TIC:TOTAL, an aggregate)
+      aliases: {"Korea, South": KOR, "China, Mainland": CHN, "Hong Kong": HKG, "Taiwan": TWN, "Russia": RUS, "Turkey": TUR,
+                "Czech Republic": CZE, "British Virgin Islands": VGB, "Cayman Islands": CYM, "Curacao": CUW, "Syria": SYR,
+                "Saint Kitts and Nevis": KNA, "Venezuela": VEN, "Bahamas": BHS, "Egypt": EGY, "United Kingdom": GBR,
+                "United Arab Emirates": ARE, "Guernsey": GGY, "Jersey": JEY, "Memo: Euro Area": EMU}
+
+signals:                          # the World page's Signal Board (method 1.2, R17): the borrower-side slices, by counterparty country
+  bis.LBS:                        # all reporting countries' cross-border claims on each country, loans and deposits (G)
+    filter: {L_POSITION: C, L_INSTR: G, L_CURR_TYPE: A, L_PARENT_CTY: 5J, L_REP_BANK_TYPE: A, L_REP_CTY: 5A, L_POS_TYPE: N}
+    slices:
+      lbs_loans:    {L_MEASURE: [S, F], L_DENOM: TO1, L_CP_SECTOR: A}          # B1 (F: FX- and break-adjusted change) and the A3 denominator (S)
+      lbs_fx_loans_nb: {L_MEASURE: S, L_DENOM: [USD, EUR, JPY], L_CP_SECTOR: N} # A1, cross-border part
+  bis.LBS@local:                  # the same file by REPORTING country: banks inside the economy, their claims in foreign currency on resident non-banks
+    filter: {L_MEASURE: S, L_POSITION: C, L_INSTR: A, L_DENOM: TO1, L_CURR_TYPE: F, L_PARENT_CTY: 5J, L_REP_BANK_TYPE: A, L_CP_SECTOR: N,
+             L_CP_COUNTRY: 5J, L_POS_TYPE: R}
+    slices:
+      lbs_local_fx_nb: {}         # A1, local part (method 1.4): all instruments and all foreign currencies, the only published cell with a sector split
+  bis.CBS:                        # all reporting banks (4O = all excluding inside-area foreign banks consolidated by their parent)
+    filter: {L_MEASURE: S, L_REP_CTY: 5A, L_INSTR: A, CURR_TYPE_BOOK: TO1, L_CP_SECTOR: A}
+    slices:
+      cbs_st_intl:  {CBS_BANK_TYPE: 4O, CBS_BASIS: F, L_POSITION: I, REM_MATURITY: U}   # A2: international claims up to one year, immediate counterparty
+      cbs_ur_foreign: {CBS_BANK_TYPE: 4R, CBS_BASIS: U, L_POSITION: C, REM_MATURITY: A} # context: foreign claims, ultimate risk
+  bis.DSS:                        # international debt securities by NATIONALITY of issuer (residence = all countries excluding residents)
+    filter: {FREQ: Q, ISSUER_RES: 3P, ISSUER_BUS_IMM: "1", MARKET: C, ISSUE_TYPE: A, ISSUE_CUR_GROUP: A, ISSUE_OR_MAT: A, ISSUE_RE_MAT: A,
+             ISSUE_RATE: A, ISSUE_RISK: A, ISSUE_COL: A}
+    slices:
+      ids_nat:      {ISSUER_BUS_ULT: "1", ISSUE_CUR: TO1, MEASURE: [I, G]}       # A3 numerator (I) and B2 (G: net issues)
+      ids_nat_fx:   {ISSUER_BUS_ULT: ["1", E, I], ISSUE_CUR: [USD, EUR, JPY], MEASURE: I}   # A1 bond part: all issuers less banks (E private, I public)
+  bis.DSS@res:                    # the same by RESIDENCE of issuer (method 1.3): issuers resident in the country, sector of the immediate borrower
+    filter: {FREQ: Q, ISSUER_NAT: 3P, ISSUER_BUS_ULT: "1", MARKET: C, ISSUE_TYPE: A, ISSUE_CUR_GROUP: A, ISSUE_OR_MAT: A, ISSUE_RE_MAT: A,
+             ISSUE_RATE: A, ISSUE_RISK: A, ISSUE_COL: A}
+    slices:
+      ids_res_fx:   {ISSUER_BUS_IMM: ["1", E, I], ISSUE_CUR: [USD, EUR, JPY], MEASURE: I}   # A1 bond part (residence, consistent with GDP and LBS)
+  bis.TC:                         # GDP implied by total credit: USD amount / (% of GDP / 100), four-quarter GDP at the end-quarter rate
+    filter: {TC_BORROWERS: P, TC_LENDERS: A, VALUATION: M, TC_ADJUST: A, UNIT_TYPE: [USD, "770"]}
+  fred.observations:              # the World pulse (C1–C3): value = USD bn, or index points for the dollar index
+    SWPT:     {measure: swap_lines,         freq: W, scale: 1.0e-3}   # H.4.1 central bank liquidity swaps, millions
+    WMTSECL1: {measure: custody_treasuries, freq: W, scale: 1.0e-3}   # H.4.1 memo: marketable Treasuries in custody for foreign official and international accounts
+    DTWEXBGS: {measure: dollar_index,       freq: D, scale: 1.0}      # H.10 nominal broad US dollar index, Jan 2006 = 100
+  tic.files:                      # C5: net foreign purchases of US long-term securities (net US sales), all holders and foreign official
+    slt_table1.txt: {total: "99996", official: "99990"}
+
+border_flows:
+  imf.BOP:                       # financial account transactions (published flows, no valuation changes), US dollars, quarterly
+    sides: {A_NFA_T: assets, L_NIL_T: liabilities, A_T: assets, NETCD_T: net}
+    items: {D_F: direct, P_F: portfolio, P_F5: portfolio_equity, P_F3: portfolio_debt, O_F: other, O_F4: other_loans, O_F2: other_deposits, R_F: reserves,
+            CAB: current_account}       # the current account balance (credit less debit), a buffer on the Signal Board (method 1.3, R18)
+
+totals:
+  imf.IIP:                        # international investment position, US dollars
+    sides: {A_P: assets, L_P: liabilities, NETAL_P: net}
+    items: {IIP: total, D: direct, P_MV: portfolio, O: other, R: reserves, NIIP: net,
+            P_F5_MV: portfolio_equity, P_F3_MV: portfolio_debt, F_F7_T: derivatives, O_F4_NV: other_loans, O_F2_NV: other_deposits,
+            D_F5: direct_equity, D_FL: direct_debt}   # direct investment split into equity and debt instruments (method 1.3: debt vs equity-like)
+  imf.PIP:                        # the IMF's own derived liabilities (ACCOUNTING_ENTRY L): what every reporting holder, SEFER and SSIO hold of an economy's securities
+    match: {ACCOUNTING_ENTRY: L, SECTOR: S1, COUNTERPART_SECTOR: S1, COUNTERPART_COUNTRY: G001}
+    items: {P_TOTINV_P_SCC_USD: portfolio_derived, P_F51_P_SCC_USD: portfolio_equity_derived, P_F3_P_SCC_USD: portfolio_debt_derived}
+
+# External fetches (2 Nov 2026): what scripts/fetch_wdi.py, fetch_quarterly.py and fetch_warning.py read
+# straight from the publishers' APIs into $MONEY_FLOW_DATA_ROOT/external/<name>/<date>.json. Not collector datasets and not read
+# by build_tables.py: the newest file of each is carried whole into a view (earn/global: wdi and quarterly; sovereign/global:
+# warning) by scripts/sitebuild/views.py and sovereign.py. tests/test_surfaces.py checks that each fetcher's constants
+# equal these entries, so the registry and the code cannot drift. Licence classes are in sources.yaml (wb.WDI, imf.BOP,
+# imf.QNEA, bis.XRU, imf.WEO, imf.IIP, fred.observations key IRLTLT01).
+external:
+  wdi:                            # World Bank WDI, annual, current US dollars, 2000 to the current year; CC BY 4.0
+    script: fetch_wdi.py
+    dataset: wb.WDI
+    from: 2000
+    economies: board + USA        # the 36 Signal Board economies (sovereign.yaml) and the hub
+    series:
+      BN.GSR.GNFS.CD: gs          # net trade in goods and services (BoP)
+      BN.GSR.FCTY.CD: pi          # net primary income (BoP)
+      NY.GDP.MKTP.CD: gdp
+      NY.GDP.PCAP.CD: gdp_pc
+      BX.GSR.GNFS.CD: x           # exports of goods and services (BoP)
+      BM.GSR.GNFS.CD: m           # imports of goods and services (BoP)
+      NE.EXP.GNFS.ZS: ne_x        # national-accounts exports, % of GDP (a cross-check only)
+      NE.IMP.GNFS.ZS: ne_m
+  quarterly:                      # IMF BOP credits and debits, IMF QNEA GDP, BIS XRU quarterly averages, from 2004 Q1
+    script: fetch_quarterly.py
+    datasets: [imf.BOP, imf.QNEA, bis.XRU]
+    from: 2004-Q1
+    bop_key: "{c}.CD_T+DB_T.GS+IN1..Q"       # IMF.STA,BOP: goods and services, primary income; credit and debit; every unit
+    qnea_key: "{c}.B1GQ.V.NSA..Q"            # IMF.STA,QNEA: GDP, current prices, not seasonally adjusted, every transformation
+    xru: {freq: Q, collection: A, source: hub/bis/bulk/WS_XRU}   # domestic currency per US dollar, period average, from the mirror
+    check: V23                    # four-quarter sums against WDI within 3%; a failing economy-series is withheld downstream
+  warning:                        # IMF WEO, IMF IIP totals, OECD long-term rates via FRED, for the Sovereign section
+    script: fetch_warning.py
+    config: sovereign.yaml        # economies, two-letter FRED codes, benchmark, rule defaults, validation, expectations
+    datasets: [imf.WEO, imf.IIP, fred.observations]
+    weo_indicators: [GGXWDG_NGDP, GGXCNL_NGDP, GGXONLB_NGDP, NGDP, NGDPD, BCA_NGDPD]
+    iip_key: "{c}.A_P+L_P.IIP.USD.A+Q"
+    fred_series: "IRLTLT01{iso2}M156N"
+
+# Economies whose domestic currency (IMF unit XDC) is another economy's, so the BIS exchange-rate table has no area for
+# them (R1 v2): dollarised and euroised economies, and Guinea-Bissau in the CFA franc zone.
+currencies: {ECU: USD, SLV: USD, TLS: USD, PAN: USD, PLW: USD, MHL: USD, FSM: USD, XKX: EUR, AND: EUR, MNE: EUR, SMR: EUR, GNB: XOF,
+             PSE: ILS, KIR: AUD, TUV: AUD, NRU: AUD, LIE: CHF, BTN: INR}
+# Dated regimes (R1 v3): an economy that used another's currency for a period only. Outside the dates the economy's own
+# currency applies, and a value with no rate is still left out.
+currency_regimes:
+  ZWE: [{ccy: USD, from: 2009-02-01, to: 2019-06-30}]    # the multi-currency regime after the 2009 abandonment of the Zimbabwe dollar
+# Source unit corrections (R1 v3, R16): a series whose early segment is in a unit the source later superseded, so that the
+# BIS rate (in the new unit) misstates it by a power of ten. Checked by hand against the economy's size; the factor
+# multiplies the source value up to and including `until`. Everything else a power-of-ten move R16 finds is rescaled by
+# the rule itself, to the level of the earlier segment.
+unit_corrections:
+  - {economy: SLE, dataset: imf.MFS_MA, measures: [broad_money, currency], until: 2014-12-31, factor: 1.0e-3,
+     note: "IMF values before 2015-01 are in old leones (1,000 old = 1 new leone of 2022); the BIS rate for SL is in new leones for the whole history, so the old segment read a thousand times too large (USD 934 bn of broad money in 2014-12)"}

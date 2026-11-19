@@ -1,0 +1,22 @@
+economy,date,factor,note
+TUR,2005-01-01,1000000,new Turkish lira (YTL)
+ROU,2005-07-01,10000,new leu (RON)
+VEN,2008-01-01,1000,bolívar fuerte
+VEN,2018-08-20,100000,bolívar soberano
+VEN,2021-10-01,1000000,bolívar digital
+GHA,2007-07-01,10000,new cedi (GHS)
+MOZ,2006-07-01,1000,new metical (MZN)
+ZMB,2013-01-01,1000,rebased kwacha (ZMW)
+BLR,2016-07-01,10000,new rouble (BYN)
+ZWE,2006-08-01,1000,first redenomination
+ZWE,2008-08-01,10000000000,second redenomination
+ZWE,2009-02-02,1000000000000,third redenomination; multi-currency regime from 2009-02 (config currency_regimes)
+POL,1995-01-01,10000,new złoty (PLN)
+RUS,1998-01-01,1000,rouble redenomination
+UKR,1996-09-02,100000,hryvnia replaces the karbovanets
+AZE,2006-01-01,5000,new manat (AZN)
+TKM,2009-01-01,5000,new manat (TMT)
+SDN,2007-01-01,100,Sudanese pound (SDG)
+MRT,2018-01-01,10,new ouguiya (MRU)
+STP,2018-01-01,1000,new dobra (STN)
+SLE,2022-07-01,1000,new leone (SLE); the IMF MFS file carries the new unit from 2015-01 (config unit_corrections)

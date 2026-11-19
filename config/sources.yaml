@@ -1,0 +1,768 @@
+# The source registry: the one place where publisher names, dataset titles, landing pages,
+# licence classes and citation forms live, in English and Korean. The site's source lines, tooltips, the Sources page,
+# the citations, the licence gate (scripts/site/gate.py) and checks V11 and V12 are all built from it. A dataset that a
+# drawn mark uses must have a complete entry, or the build stops.
+#
+# Licence classes:
+#   open            derived marks shown with attribution; a CSV of the drawn marks may be offered
+#   terms_pending   collected or planned, terms not yet read: never shown
+#   restricted      terms read, and they do not allow public reuse: never shown
+#   third_party     copyrighted series inside an open portal (BoJ on FRED, ICE BofA on FRED, KRX in ECOS): never shown
+#   licensed        commercial data: never shown, and no such dataset is in this registry (R14)
+#
+# Terms were read on 29 Oct 2026 (the pages are listed under `terms`). `lag_days` is the publisher's usual lag after the
+# period end, per cadence, used by V12 and by the page to age a mark.
+
+classes:
+  open:           {shown: true,  csv: true,  en: "Open, with attribution", ko: "공개(출처 표시)"}
+  terms_pending:  {shown: false, csv: false, en: "Terms not yet read", ko: "이용 조건 확인 전"}
+  restricted:     {shown: false, csv: false, en: "Terms do not allow public reuse", ko: "공개 재사용 불가"}
+  third_party:    {shown: false, csv: false, en: "Third-party copyright", ko: "제3자 저작권"}
+  licensed:       {shown: false, csv: false, en: "Licensed; not shown", ko: "라이선스 자료, 표시하지 않음"}
+
+publishers:
+  bis:
+    en: Bank for International Settlements
+    ko: 국제결제은행(BIS)
+    short: BIS
+    terms: https://data.bis.org/help/legal
+    terms_note: "If the statistics are reproduced, the BIS must be cited as the source; no endorsement or affiliation may be implied."
+  imf:
+    en: International Monetary Fund
+    ko: 국제통화기금(IMF)
+    short: IMF
+    terms: https://www.imf.org/en/about/copyright-and-terms
+    terms_note: "Users may download, copy, create derivative works and publish IMF data with attribution; commercial reuse needs permission (copyright@imf.org); material changes must be stated."
+  fed:
+    en: Board of Governors of the Federal Reserve System
+    ko: 미국 연방준비제도이사회
+    short: Federal Reserve
+    terms: https://fred.stlouisfed.org/legal/
+    terms_note: "Federal Reserve series retrieved from FRED (Federal Reserve Bank of St. Louis). FRED asks that the source be cited and that the data be noted as accessed via FRED. Series that carry a third-party copyright are not used."
+  ice:
+    en: ICE Data Indices
+    ko: ICE Data Indices
+    short: ICE
+    terms: https://fred.stlouisfed.org/series/BAMLEMCBPIOAS
+    terms_note: "ICE BofA index data on FRED: reproduction in any form is prohibited without ICE's prior written permission, and FRED keeps three years of it (read 30 Oct 2026). Not used."
+  ecb:
+    en: European Central Bank
+    ko: 유럽중앙은행(ECB)
+    short: ECB
+    terms: https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html
+    terms_note: "Free reuse, commercial or not, provided the ECB is quoted as the source; changes must be stated explicitly."
+  bok:
+    en: Bank of Korea
+    ko: 한국은행
+    short: Bank of Korea
+    terms: https://www.bok.or.kr/portal/main/contents.do?menuNo=200228
+    terms_note: "The Bank of Korea must be named as the source, and any edit or processing of the data must be stated. Statistics of other agencies inside ECOS are not used."
+  ust:
+    en: US Department of the Treasury
+    ko: 미국 재무부
+    short: US Treasury
+    terms: https://catalog.data.gov/dataset/treasury-international-capital-tic-archives-of-tic-monthly-data-releases
+    terms_note: "Public domain (CC0 on data.gov)."
+  boj:
+    en: Bank of Japan
+    ko: 일본은행
+    short: Bank of Japan
+    terms: https://www.boj.or.jp/en/about/copyright.htm
+    terms_note: "Copying is allowed with explicit credit to the Bank of Japan; contents may not be altered. Its data on FRED carry the Bank of Japan's copyright, so they are not used from FRED."
+  nyfed:
+    en: Federal Reserve Bank of New York
+    ko: 뉴욕 연방준비은행
+    short: New York Fed
+    terms: https://www.newyorkfed.org/privacy/termsofuse
+    terms_note: "Licence to use, copy and distribute content with its copyright notice; SOFR needs the reference-rate notice."
+  defillama:
+    en: DefiLlama
+    ko: DefiLlama
+    short: DefiLlama
+    terms: https://defillama.com/terms
+    terms_note: "Personal, non-commercial use only; the data may not be republished in any form without permission (read 29 Oct 2026)."
+  # Added 2 Nov 2026 with the fetchers moved from global-network and the Sovereign section.
+  wb:
+    en: World Bank
+    ko: 세계은행
+    short: World Bank
+    terms: https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets
+    terms_note: "World Development Indicators are published under CC BY 4.0: free reuse with attribution to the World Bank and the indicator's source (read 2 Nov 2026)."
+  oecd:
+    en: OECD
+    ko: 경제협력개발기구(OECD)
+    short: OECD
+    terms: https://www.oecd.org/en/about/terms-conditions.html
+    terms_note: "OECD data are released under CC BY 4.0 (since July 2024). The long-term interest rates are read from FRED, which re-hosts the Main Economic Indicators and asks that the source be cited and the data noted as accessed via FRED (read 2 Nov 2026)."
+  esm:
+    en: European Stability Mechanism
+    ko: 유럽안정메커니즘(ESM)
+    short: ESM
+    terms: https://www.esm.europa.eu/legal-notice
+    terms_note: "Programme facts (dates, amounts) read from the ESM's and the European Commission's programme pages; reuse with attribution (read 2 Nov 2026)."
+  boc:
+    en: Bank of Canada and Bank of England
+    ko: 캐나다은행·영란은행
+    short: BoC–BoE
+    terms: https://www.bankofcanada.ca/terms/
+    terms_note: "The BoC–BoE Sovereign Default Database (Staff Analytical Paper 2026-48) may be reproduced with attribution to its authors and the two banks (read 2 Nov 2026)."
+  ec:
+    en: European Commission
+    ko: 유럽연합 집행위원회
+    short: European Commission
+    terms: https://commission.europa.eu/legal-notice_en
+    terms_note: "Reuse of Commission documents is allowed with attribution (Decision 2011/833/EU); the MIP scoreboard gives rules R25 and R26 their thresholds, no data (read 2 Nov 2026)."
+
+# Datasets, by the ids the collector and the tables use. `series` describes one series as a pointer, from the dimensions a mark
+# carries: {creditor}, {debtor}, {economy}, {channel}, {measure}, {detail}, {sector}, {currency}, {period}.
+datasets:
+  bis.LBS:
+    publisher: bis
+    class: open
+    short: BIS LBS
+    en: Locational banking statistics
+    ko: 소재지 기준 국제은행통계
+    landing: https://data.bis.org/topics/LBS
+    cadence: Q
+    lag_days: {Q: 130}
+    series: {en: "BIS LBS: banks located in {creditor}, cross-border claims on {debtor}, {instrument}, all currencies, {sector}", ko: "BIS LBS: {creditor} 소재 은행의 {debtor}에 대한 국경 간 채권, {instrument}, 전 통화, {sector}"}
+  bis.CBS:
+    publisher: bis
+    class: open
+    short: BIS CBS
+    en: Consolidated banking statistics
+    ko: 연결기준 국제은행통계
+    landing: https://data.bis.org/topics/CBS
+    cadence: Q
+    lag_days: {Q: 130}
+    series: {en: "BIS CBS: banks headquartered in {creditor}, foreign claims on {debtor}, {basis} basis", ko: "BIS CBS: {creditor} 국적 은행의 {debtor}에 대한 대외채권, {basis} 기준"}
+  bis.GLI:
+    publisher: bis
+    class: open
+    short: BIS GLI
+    en: Global liquidity indicators
+    ko: 글로벌 유동성 지표
+    landing: https://data.bis.org/topics/GLI
+    cadence: Q
+    lag_days: {Q: 130}
+    series: {en: "BIS GLI: credit in {currency} to non-banks outside the currency area, {detail}", ko: "BIS GLI: 통화권 밖 비은행 부문에 대한 {currency} 표시 신용, {detail}"}
+  bis.CBTA:
+    publisher: bis
+    class: open
+    short: BIS CBTA
+    en: Central bank total assets
+    ko: 중앙은행 총자산
+    landing: https://data.bis.org/topics/CBTA
+    cadence: M
+    lag_days: {M: 120, Q: 150}
+    series: {en: "BIS: total assets of the central bank of {economy}, in US dollars", ko: "BIS: {economy} 중앙은행 총자산, 미 달러 환산"}
+  bis.TC:
+    publisher: bis
+    class: open
+    short: BIS TC
+    en: Credit to the non-financial sector
+    ko: 비금융부문 신용
+    landing: https://data.bis.org/topics/TOTAL_CREDIT
+    cadence: Q
+    lag_days: {Q: 160}
+    series: {en: "BIS: credit to the private non-financial sector of {economy}, all lenders, market value, US dollars", ko: "BIS: {economy} 민간 비금융부문 신용, 전 대출기관, 시장가치, 미 달러"}
+  bis.DSS:
+    publisher: bis
+    class: open
+    short: BIS DSS
+    en: International debt securities
+    ko: 국제채권 통계
+    landing: https://data.bis.org/topics/DSS
+    cadence: Q
+    lag_days: {Q: 100}
+    series: {en: "BIS: international debt securities issued by residents of {economy}, {detail}, amounts outstanding", ko: "BIS: {economy} 거주자 발행 국제채권, {detail}, 잔액"}
+  bis.XRU:
+    publisher: bis
+    class: open
+    short: BIS XRU
+    en: US dollar exchange rates
+    ko: 미 달러 환율
+    landing: https://data.bis.org/topics/XRU
+    cadence: M
+    lag_days: {M: 20}
+    series: {en: "BIS: {currency} per US dollar, {detail}", ko: "BIS: 미 달러당 {currency}, {detail}"}
+  imf.PIP:
+    publisher: imf
+    class: open
+    short: IMF PIP (CPIS)
+    en: Portfolio Investment Positions by Counterpart Economy (formerly CPIS)
+    ko: 상대국별 증권투자 잔액(구 CPIS)
+    landing: https://data.imf.org/en/datasets/IMF.STA:PIP
+    cadence: S
+    lag_days: {S: 240, A: 330}
+    series: {en: "IMF PIP: holdings by residents of {creditor} of {instrument} issued by {debtor}, all sectors", ko: "IMF PIP: {creditor} 거주자가 보유한 {debtor} 발행 {instrument}, 전 부문"}
+  imf.DIP:
+    publisher: imf
+    class: open
+    short: IMF DIP (CDIS)
+    en: Direct Investment Positions by Counterpart Economy (formerly CDIS)
+    ko: 상대국별 직접투자 잔액(구 CDIS)
+    landing: https://data.imf.org/en/datasets/IMF.STA:DIP
+    cadence: A
+    lag_days: {A: 400}
+    series: {en: "IMF DIP: direct investment of {creditor} in {debtor}, net, as {reported_by} reports it", ko: "IMF DIP: {creditor}의 {debtor} 직접투자, 순액, {reported_by} 보고"}
+  imf.IIP:
+    publisher: imf
+    class: open
+    short: IMF IIP
+    en: International Investment Position
+    ko: 국제투자대조표(IIP)
+    landing: https://data.imf.org/en/datasets/IMF.STA:IIP
+    cadence: Q
+    lag_days: {Q: 150, A: 300}
+    series: {en: "IMF IIP: {economy}, {side}, {item}", ko: "IMF IIP: {economy}, {side}, {item}"}
+  imf.BOP:
+    publisher: imf
+    class: open
+    short: IMF BOP
+    en: Balance of Payments
+    ko: 국제수지(BOP)
+    landing: https://data.imf.org/en/datasets/IMF.STA:BOP
+    cadence: Q
+    lag_days: {Q: 150, A: 300}
+    series: {en: "IMF BOP: {economy}, financial account, {item}, {side}", ko: "IMF BOP: {economy}, 금융계정, {item}, {side}"}
+  imf.MFS_MA:
+    publisher: imf
+    class: open
+    short: IMF MFS
+    en: Monetary and Financial Statistics, monetary aggregates
+    ko: 통화금융통계, 통화지표
+    landing: https://data.imf.org/en/datasets/IMF.STA:MFS_MA
+    cadence: M
+    lag_days: {M: 90}
+    series: {en: "IMF MFS: {economy}, {measure}", ko: "IMF MFS: {economy}, {measure}"}
+  imf.MFS_CBS:
+    publisher: imf
+    class: open
+    short: IMF MFS
+    en: Monetary and Financial Statistics, central bank survey
+    ko: 통화금융통계, 중앙은행 서베이
+    landing: https://data.imf.org/en/datasets/IMF.STA:MFS_CBS
+    cadence: M
+    lag_days: {M: 90}
+    series: {en: "IMF MFS central bank survey: {economy}, {measure}", ko: "IMF MFS 중앙은행 서베이: {economy}, {measure}"}
+  imf.MFS_ODC:
+    publisher: imf
+    class: open
+    short: IMF MFS
+    en: Monetary and Financial Statistics, other depository corporations survey
+    ko: 통화금융통계, 기타예금취급기관 서베이
+    landing: https://data.imf.org/en/datasets/IMF.STA:MFS_ODC
+    cadence: M
+    lag_days: {M: 90}
+    series: {en: "IMF MFS depository corporations survey: {economy}, {measure}", ko: "IMF MFS 예금취급기관 서베이: {economy}, {measure}"}
+  imf.IRFCL:
+    publisher: imf
+    class: open
+    short: IMF IRFCL
+    en: International Reserves and Foreign Currency Liquidity
+    ko: 외환보유액 및 외화유동성
+    landing: https://data.imf.org/en/datasets/IMF.STA:IRFCL
+    cadence: M
+    lag_days: {M: 60}
+    series: {en: "IMF IRFCL: {economy}, official reserve assets", ko: "IMF IRFCL: {economy}, 공식 준비자산"}
+  imf.COFER:
+    publisher: imf
+    class: open
+    short: IMF COFER
+    en: Currency Composition of Official Foreign Exchange Reserves
+    ko: 외환보유액 통화 구성(COFER)
+    landing: https://data.imf.org/en/datasets/IMF.STA:COFER
+    cadence: Q
+    lag_days: {Q: 100}
+    series: {en: "IMF COFER: world allocated reserves held in {detail}", ko: "IMF COFER: 세계 외환보유액 중 {detail} 표시분"}
+  fred.observations:
+    publisher: fed
+    class: open
+    short: Federal Reserve via FRED
+    en: Federal Reserve statistical releases (H.4.1, H.6), retrieved from FRED
+    ko: 연준 통계(H.4.1, H.6), FRED 경유
+    landing: https://fred.stlouisfed.org/
+    cadence: W
+    lag_days: {D: 3, W: 9, M: 40}
+    series: {en: "Federal Reserve: {measure} ({key}), retrieved from FRED", ko: "연준: {measure} ({key}), FRED 경유"}
+    # Per-series overrides: who owns each series, and so which class it has.
+    keys:
+      ECBASSETSW: {publisher: ecb, class: open, note: "ECB data re-hosted on FRED; ECB reuse policy applies. ecb.ILM is the primary source"}
+      JPNASSETS: {publisher: boj, class: third_party, note: "Copyright Bank of Japan on FRED; FRED cannot grant reuse. BoJ assets come from BIS CBTA"}
+      DTWEXBGS: {class: open}
+      SWPT: {class: open, note: "Fed H.4.1, public domain (citation requested)"}
+      WMTSECL1: {class: open, note: "Fed H.4.1 memorandum item, public domain (citation requested)"}
+      BAMLEMCBPIOAS: {publisher: ice, class: third_party, note: "ICE BofA index data on FRED: reproduction prohibited without ICE's written permission; not shown (design note D4)"}
+      IRLTLT01: {publisher: oecd, class: open, note: "OECD Main Economic Indicators, long-term government bond yields (10-year, monthly), one series per economy IRLTLT01{iso2}M156N, re-hosted on FRED: public domain via FRED, citation requested. The Sovereign section's R28 reads them (scripts/fetch_warning.py); only the spread against the benchmark is published, never a yield series"}
+  ecb.BSI:
+    publisher: ecb
+    class: open
+    short: ECB BSI
+    en: Monetary aggregates (balance sheet items)
+    ko: 통화지표(BSI)
+    landing: https://data.ecb.europa.eu/data/datasets/BSI
+    cadence: M
+    lag_days: {M: 35}
+    series: {en: "ECB BSI: euro area {measure} ({key})", ko: "ECB BSI: 유로지역 {measure} ({key})"}
+  ecb.ILM:
+    publisher: ecb
+    class: open
+    short: ECB ILM
+    en: Eurosystem weekly financial statement
+    ko: 유로시스템 주간 재무제표
+    landing: https://data.ecb.europa.eu/data/datasets/ILM
+    cadence: W
+    lag_days: {W: 7}
+    series: {en: "ECB ILM: Eurosystem total assets ({key})", ko: "ECB ILM: 유로시스템 총자산 ({key})"}
+  ecos.StatisticSearch:
+    publisher: bok
+    class: open
+    short: Bank of Korea, ECOS
+    en: Economic Statistics System (ECOS)
+    ko: 경제통계시스템(ECOS)
+    landing: https://ecos.bok.or.kr/
+    cadence: M
+    lag_days: {M: 45}
+    series: {en: "Bank of Korea ECOS: {measure} ({key})", ko: "한국은행 ECOS: {measure} ({key})"}
+  tic.files:
+    publisher: ust
+    class: open
+    short: US Treasury TIC
+    en: Treasury International Capital (TIC) System, foreign holdings of US long-term securities (SLT table 1)
+    ko: 미 재무부 TIC, 외국인의 미국 장기증권 보유(SLT 표 1)
+    landing: https://home.treasury.gov/data/treasury-international-capital-tic-system
+    cadence: M
+    lag_days: {M: 55}
+    series: {en: "US Treasury TIC SLT: holdings by residents of {creditor} of US {instrument} (custodian residence)", ko: "미 재무부 TIC SLT: {creditor} 거주자의 미국 {instrument} 보유(보관기관 소재지 기준)"}
+  # External fetches (2 Nov 2026): read by scripts/fetch_wdi.py, fetch_quarterly.py and fetch_warning.py
+  # straight from the publishers' APIs into $MONEY_FLOW_DATA_ROOT/external/<name>/<date>.json, never through the collector; the
+  # newest file is the content of a view (earn/global, sovereign/global). config/datasets.yaml `external` lists the series.
+  wb.WDI:
+    publisher: wb
+    class: open
+    short: World Bank WDI
+    en: World Development Indicators
+    ko: 세계개발지표(WDI)
+    landing: https://data.worldbank.org/indicator
+    cadence: A
+    lag_days: {A: 300}
+    licence_note: "CC BY 4.0. The two balance-of-payments lines (net trade in goods and services, net primary income) are the IMF's Balance of Payments statistics as the World Bank republishes them."
+    series: {en: "World Bank WDI: {economy}, {measure} ({key}), annual, current US dollars", ko: "세계은행 WDI: {economy}, {measure} ({key}), 연간, 경상 달러"}
+  imf.QNEA:
+    publisher: imf
+    class: open
+    short: IMF QNEA
+    en: Quarterly National Economic Accounts
+    ko: 분기 국민계정(QNEA)
+    landing: https://data.imf.org/en/datasets/IMF.STA:QNEA
+    cadence: Q
+    lag_days: {Q: 120}
+    series: {en: "IMF QNEA: {economy}, GDP at current prices (B1GQ), not seasonally adjusted, domestic currency", ko: "IMF QNEA: {economy}, 경상가격 GDP(B1GQ), 계절조정 전, 자국 통화"}
+  imf.WEO:
+    publisher: imf
+    class: open
+    short: IMF WEO
+    en: World Economic Outlook database
+    ko: 세계경제전망(WEO) 데이터베이스
+    landing: https://data.imf.org/en/datasets/IMF.RES:WEO
+    cadence: S
+    lag_days: {S: 200, A: 400}
+    series: {en: "IMF WEO: {economy}, {measure} ({key}), annual, latest vintage; the publication year and the next are projections", ko: "IMF WEO: {economy}, {measure} ({key}), 연간, 최신 판. 발표 연도와 그 다음 해는 전망치"}
+  llama.stablecoins:
+    publisher: defillama
+    class: restricted
+    short: DefiLlama
+    en: Stablecoin circulating supply
+    ko: 스테이블코인 유통량
+    landing: https://defillama.com/stablecoins
+    cadence: D
+    lag_days: {D: 2}
+    series: {en: "DefiLlama: total USD-pegged stablecoin supply", ko: "DefiLlama: 달러 연동 스테이블코인 총 유통량"}
+
+  # Daily sources registered with their terms (read 29 Oct 2026) but not collected (`planned: true`): never shown.
+  fiscal.dts:
+    publisher: ust
+    class: open
+    short: Daily Treasury Statement
+    en: Daily Treasury Statement (Fiscal Data)
+    ko: 미 재무부 일일 재정 보고서
+    landing: https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/
+    cadence: D
+    lag_days: {D: 2}
+    planned: true
+  nyfed.markets:
+    publisher: nyfed
+    class: open
+    short: New York Fed Markets
+    en: New York Fed Markets Data (reverse repo and swap operations, reference rates)
+    ko: 뉴욕 연준 시장 자료
+    landing: https://markets.newyorkfed.org/
+    cadence: D
+    lag_days: {D: 1}
+    notice: "The data is subject to the Terms of Use posted at newyorkfed.org. The New York Fed is not responsible for publication of the data by datasteg, does not sanction or endorse any particular republication, and has no liability for your use."
+    planned: true
+  ecb.EXR:
+    publisher: ecb
+    class: open
+    short: ECB euro reference rates
+    en: Euro foreign exchange reference rates
+    ko: 유로 기준환율
+    landing: https://data.ecb.europa.eu/data/datasets/EXR
+    cadence: D
+    lag_days: {D: 1}
+    planned: true
+  boj.stats:
+    publisher: boj
+    class: open
+    short: Bank of Japan
+    en: Bank of Japan time-series data (current account balances, accounts)
+    ko: 일본은행 시계열 통계
+    landing: https://www.stat-search.boj.or.jp/
+    cadence: D
+    lag_days: {D: 2}
+    notice: "This service uses the API provided by the Bank of Japan Time-Series Data Search. The Bank of Japan does not guarantee the content of the service."
+    planned: true
+
+# Source links (30 Oct 2026): what a page names as its source, keyed by a stable id. Every source label on the World
+# page and the Markets pages is a link rendered from here, and the Sources page lists the same entries with the panels
+# that use them, so the two cannot disagree. `url` is the publisher's landing page for the dataset, series or paper
+# (never an API endpoint); `checked` is the day it was opened and seen to land on that dataset. `dataset` ties an entry
+# to the datasets above; `code` is the publisher's dataset or series code. Check V17 fails the build when a panel names
+# an id that is missing here or an entry lacks a label, a name or a URL.
+links:
+  bis.gli:
+    dataset: bis.GLI
+    publisher: bis
+    code: GLI
+    label: {en: BIS GLI, ko: BIS GLI}
+    name: {en: BIS global liquidity indicators, ko: BIS 글로벌 유동성 지표}
+    url: https://data.bis.org/topics/GLI
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  bis.dss:
+    dataset: bis.DSS
+    publisher: bis
+    code: DSS
+    label: {en: BIS DSS, ko: BIS DSS}
+    name: {en: BIS debt securities statistics (international debt securities), ko: BIS 채권 통계(국제채권)}
+    url: https://data.bis.org/topics/DSS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  bis.cbta:
+    dataset: bis.CBTA
+    publisher: bis
+    code: CBTA
+    label: {en: BIS CBTA, ko: BIS CBTA}
+    name: {en: BIS central bank total assets, ko: BIS 중앙은행 총자산}
+    url: https://data.bis.org/topics/CBTA
+    cadence: {en: monthly, ko: 월}
+    checked: 2026-10-30
+  bis.lbs:
+    dataset: bis.LBS
+    publisher: bis
+    code: LBS
+    label: {en: BIS LBS, ko: BIS LBS}
+    name: {en: BIS locational banking statistics, ko: BIS 소재지 기준 국제은행통계}
+    url: https://data.bis.org/topics/LBS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  ecb.ilm:
+    dataset: ecb.ILM
+    publisher: ecb
+    code: ILM.W.U2.C.T000000.Z5.Z01
+    label: {en: ECB ILM, ko: ECB ILM}
+    name: {en: "ECB: Eurosystem weekly financial statement, total assets (ILM.W.U2.C.T000000.Z5.Z01)", ko: "ECB: 유로시스템 주간 재무제표, 총자산(ILM.W.U2.C.T000000.Z5.Z01)"}
+    url: https://data.ecb.europa.eu/data/datasets/ILM/ILM.W.U2.C.T000000.Z5.Z01
+    cadence: {en: weekly, ko: 주}
+    checked: 2026-10-30
+  fred.walcl:
+    dataset: fred.observations
+    publisher: fed
+    code: WALCL
+    label: {en: Fed H.4.1 via FRED, ko: 연준 H.4.1(FRED)}
+    name: {en: "Federal Reserve H.4.1: total assets, Wednesday level (WALCL), via FRED", ko: "연준 H.4.1: 총자산, 수요일 기준(WALCL), FRED 경유"}
+    url: https://fred.stlouisfed.org/series/WALCL
+    cadence: {en: weekly, ko: 주}
+    checked: 2026-10-30
+  imf.cofer:
+    dataset: imf.COFER
+    publisher: imf
+    code: COFER
+    label: {en: IMF COFER, ko: IMF COFER}
+    name: {en: IMF Currency Composition of Official Foreign Exchange Reserves, ko: IMF 외환보유액 통화 구성(COFER)}
+    url: https://data.imf.org/en/datasets/IMF.STA:COFER
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  imf.iip:
+    dataset: imf.IIP
+    publisher: imf
+    code: IIP
+    label: {en: IMF IIP, ko: IMF IIP}
+    name: {en: IMF International Investment Position, ko: IMF 국제투자대조표(IIP)}
+    url: https://data.imf.org/en/datasets/IMF.STA:IIP
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  imf.pip:
+    dataset: imf.PIP
+    publisher: imf
+    code: PIP
+    label: {en: IMF PIP (CPIS), ko: IMF PIP(CPIS)}
+    name: {en: IMF Portfolio Investment Positions by Counterpart Economy (formerly CPIS), ko: IMF 상대국별 증권투자 잔액(구 CPIS)}
+    url: https://data.imf.org/en/datasets/IMF.STA:PIP
+    cadence: {en: half-yearly, ko: 반기}
+    checked: 2026-10-30
+  imf.dip:
+    dataset: imf.DIP
+    publisher: imf
+    code: DIP
+    label: {en: IMF DIP (CDIS), ko: IMF DIP(CDIS)}
+    name: {en: IMF Direct Investment Positions by Counterpart Economy (formerly CDIS), ko: IMF 상대국별 직접투자 잔액(구 CDIS)}
+    url: https://data.imf.org/en/datasets/IMF.STA:DIP
+    cadence: {en: annual, ko: 연}
+    checked: 2026-10-30
+  paper.borio2022:
+    paper: "44664"
+    publisher: bis
+    label: {en: "Borio, McCauley and McGuire (2022)", ko: "Borio·McCauley·McGuire(2022)"}
+    name: {en: "Dollar debt in FX swaps and forwards: huge, missing and growing, BIS Quarterly Review, December 2022", ko: "Dollar debt in FX swaps and forwards: huge, missing and growing, BIS 분기보고서, 2022년 12월"}
+    url: https://www.bis.org/publ/qtrpdf/r_qt2212h.htm
+    cadence: {en: one-off estimate, ko: 일회성 추정}
+    checked: 2026-10-30
+    # The estimate the World page shows beside its chart, never added to a total: non-banks outside the US, dollar
+    # obligations in FX swaps, forwards and currency swaps. The paper's abstract says "as much as $25 trillion"; its
+    # body says "$26 trillion" at end-June 2022. The page keeps the value it had (25,000 bn, "up to"); see the note.
+    estimate: {usd_bn: 25000, as_of: 2022-06-30, up_to: true}
+  paper.cmns2021:
+    paper: cmns2021
+    publisher: null
+    label: {en: "Coppola, Maggiori, Neiman and Schreger (2021)", ko: "Coppola·Maggiori·Neiman·Schreger(2021)"}
+    name: {en: "Redrawing the Map of Global Capital Flows: The Role of Cross-Border Financing and Tax Havens, Quarterly Journal of Economics 136(3)", ko: "Redrawing the Map of Global Capital Flows: The Role of Cross-Border Financing and Tax Havens, Quarterly Journal of Economics 136(3)"}
+    url: https://doi.org/10.1093/qje/qjab014
+    cadence: {en: paper, ko: 논문}
+    checked: 2026-10-30
+  bis.lbs_adj:
+    dataset: bis.LBS
+    publisher: bis
+    code: "LBS Q.{F,S}.C.G.TO1.A.5J.A.5A.A.{country}.N"   # B1 (F) and its stock (S, also the A3 denominator); A1's FX loans to non-banks are cited as bis.lbs
+    label: {en: BIS LBS adjusted changes, ko: BIS LBS 조정 변동}
+    name: {en: "BIS locational banking statistics: all reporting countries' cross-border loans and deposits, FX- and break-adjusted changes and amounts outstanding", ko: "BIS 소재지 기준 국제은행통계: 전체 보고국의 국경 간 대출·예금, 환율·단절 조정 변동과 잔액"}
+    url: https://data.bis.org/topics/LBS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  bis.cbs:
+    dataset: bis.CBS
+    publisher: bis
+    code: "CBS Q.S.5A.4O.F.I.A.U.TO1.A.{country} (A2 numerator); Q.S.5A.4R.U.C.A.A.TO1.A.{country} (ultimate-risk context)"
+    label: {en: BIS CBS, ko: BIS CBS}
+    name: {en: "BIS consolidated banking statistics: international claims up to one year (immediate counterparty) and foreign claims (ultimate risk)", ko: "BIS 연결기준 국제은행통계: 잔존만기 1년 이하 국제 청구권(직접 상대방 기준)과 대외채권(최종위험 기준)"}
+    url: https://data.bis.org/topics/CBS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  bis.dss_nat:
+    dataset: bis.DSS
+    publisher: bis
+    code: "DSS Q.3P.{country}.1.1.C.A.A.TO1.A.A.A.A.A.I/G"
+    label: {en: BIS DSS (nationality), ko: BIS DSS(국적)}
+    name: {en: "BIS debt securities statistics: international debt securities by nationality of issuer, amounts outstanding and net issues", ko: "BIS 채권 통계: 발행자 국적 기준 국제채권 잔액과 순발행"}
+    url: https://data.bis.org/topics/DSS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  bis.dss_res:
+    dataset: bis.DSS
+    publisher: bis
+    code: "DSS Q.{country}.3P.{1,E,I}.1.C.A.A.{USD,EUR,JPY}.A.A.A.A.A.I"
+    label: {en: BIS DSS (residence), ko: BIS DSS(거주성)}
+    name: {en: "BIS debt securities statistics: international debt securities by residence of issuer, by currency and sector of the immediate borrower", ko: "BIS 채권 통계: 발행자 거주성 기준 국제채권, 통화·직접 차입 부문별"}
+    url: https://data.bis.org/topics/DSS
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-31
+  imf.bop:
+    dataset: imf.BOP
+    publisher: imf
+    code: "BOP {country}.CAB.NETCD_T.USD.Q"
+    label: {en: IMF BOP, ko: IMF BOP}
+    name: {en: "IMF Balance of Payments: current account balance", ko: "IMF 국제수지: 경상수지"}
+    url: https://data.imf.org/en/datasets/IMF.STA:BOP
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-31
+  bis.tc:
+    dataset: bis.TC
+    publisher: bis
+    code: "TC Q.{country}.P.A.M.USD.A / 770.A"
+    label: {en: BIS total credit (GDP), ko: BIS 총신용(GDP)}
+    name: {en: "BIS credit to the non-financial sector: GDP implied by credit in US dollars and as a per cent of GDP", ko: "BIS 비금융부문 신용: 달러 표시 신용과 GDP 대비 비율에서 구한 GDP"}
+    url: https://data.bis.org/topics/TOTAL_CREDIT
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-10-30
+  imf.irfcl:
+    dataset: imf.IRFCL
+    publisher: imf
+    code: "IRFCLDT1_IRFCL65_USD (Section I); IRFCLDT2_USD (Section II, predetermined short-term net drains)"
+    label: {en: IMF IRFCL, ko: IMF IRFCL}
+    name: {en: "IMF International Reserves and Foreign Currency Liquidity: official reserve assets", ko: "IMF 외환보유액 및 외화유동성: 공식 준비자산"}
+    url: https://data.imf.org/en/datasets/IMF.STA:IRFCL
+    cadence: {en: monthly, ko: 월}
+    checked: 2026-10-30
+  fred.swpt:
+    dataset: fred.observations
+    publisher: fed
+    code: SWPT
+    label: {en: Fed H.4.1 via FRED, ko: 연준 H.4.1(FRED)}
+    name: {en: "Federal Reserve H.4.1: central bank liquidity swaps, Wednesday level (SWPT), via FRED", ko: "연준 H.4.1: 중앙은행 유동성 스왑, 수요일 기준(SWPT), FRED 경유"}
+    url: https://fred.stlouisfed.org/series/SWPT
+    cadence: {en: weekly, ko: 주}
+    checked: 2026-10-30
+  fred.wmtsecl1:
+    dataset: fred.observations
+    publisher: fed
+    code: WMTSECL1
+    label: {en: Fed H.4.1 via FRED, ko: 연준 H.4.1(FRED)}
+    name: {en: "Federal Reserve H.4.1 memorandum: marketable US Treasuries held in custody for foreign official and international accounts, Wednesday level (WMTSECL1), via FRED", ko: "연준 H.4.1 참고항목: 외국 공공·국제기구 계정 보관 시장성 미 국채, 수요일 기준(WMTSECL1), FRED 경유"}
+    url: https://fred.stlouisfed.org/series/WMTSECL1
+    cadence: {en: weekly, ko: 주}
+    checked: 2026-10-30
+  fred.dtwexbgs:
+    dataset: fred.observations
+    publisher: fed
+    code: DTWEXBGS
+    label: {en: Fed H.10 via FRED, ko: 연준 H.10(FRED)}
+    name: {en: "Federal Reserve H.10: nominal broad US dollar index, January 2006 = 100 (DTWEXBGS), via FRED", ko: "연준 H.10: 명목 광의 달러지수, 2006년 1월 = 100(DTWEXBGS), FRED 경유"}
+    url: https://fred.stlouisfed.org/series/DTWEXBGS
+    cadence: {en: daily, ko: 일}
+    checked: 2026-10-30
+  tic.slt1:
+    dataset: tic.files
+    publisher: ust
+    code: slt_table1
+    label: {en: US Treasury TIC, ko: 미 재무부 TIC}
+    name: {en: "US Treasury TIC SLT table 1: net foreign purchases of US long-term securities, all holders and foreign official", ko: "미 재무부 TIC SLT 표 1: 외국인의 미국 장기증권 순매수, 전체와 외국 공공부문"}
+    url: https://ticdata.treasury.gov/resource-center/data-chart-center/tic/Documents/slt_table1.txt
+    cadence: {en: monthly, ko: 월}
+    checked: 2026-10-30
+  paper.bisqr2603:
+    paper: "44537"
+    publisher: bis
+    label: {en: "Aldasoro, Hardy, von Peter and Wooldridge (2026)", ko: "Aldasoro·Hardy·von Peter·Wooldridge(2026)"}
+    name: {en: "International finance through the lens of BIS statistics: offshore activity, BIS Quarterly Review, March 2026", ko: "International finance through the lens of BIS statistics: offshore activity, BIS 분기보고서, 2026년 3월"}
+    url: https://www.bis.org/publ/qtrpdf/r_qt2603f.htm
+    cadence: {en: paper, ko: 논문}
+    checked: 2026-10-30
+  # 2 Nov 2026: the earnings view (earn/global), the change feed, the lender cut and the Sovereign section. The ids
+  # imf.weo, oecd.ltr, imf.lending, eu.esm, boc.boe and eu.mip are the ones config/sovereign_glossary.yaml cites.
+  wb.wdi:
+    dataset: wb.WDI
+    publisher: wb
+    code: "BN.GSR.GNFS.CD, BN.GSR.FCTY.CD, NY.GDP.MKTP.CD, NY.GDP.PCAP.CD, BX.GSR.GNFS.CD, BM.GSR.GNFS.CD, NE.EXP.GNFS.ZS, NE.IMP.GNFS.ZS"
+    label: {en: World Bank WDI, ko: 세계은행 WDI}
+    name: {en: "World Bank World Development Indicators: net trade in goods and services and net primary income (BoP), GDP and GDP per capita, exports and imports of goods and services, current US dollars", ko: "세계은행 세계개발지표: 상품·서비스 순수출과 본원소득수지(국제수지 기준), GDP와 1인당 GDP, 상품·서비스 수출입, 경상 달러"}
+    url: https://data.worldbank.org/indicator/BN.GSR.GNFS.CD
+    cadence: {en: annual, ko: 연}
+    checked: 2026-11-02
+  imf.bop_q:
+    dataset: imf.BOP
+    publisher: imf
+    code: "BOP {country}.CD_T+DB_T.GS+IN1..Q"
+    label: {en: IMF BOP, ko: IMF BOP}
+    name: {en: "IMF Balance of Payments: goods and services and primary income, credits and debits, quarterly", ko: "IMF 국제수지: 상품·서비스와 본원소득의 수입(受入)·지급, 분기"}
+    url: https://data.imf.org/en/datasets/IMF.STA:BOP
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-11-02
+  imf.qnea:
+    dataset: imf.QNEA
+    publisher: imf
+    code: "QNEA {country}.B1GQ.V.NSA..Q"
+    label: {en: IMF QNEA, ko: IMF QNEA}
+    name: {en: "IMF Quarterly National Economic Accounts: GDP at current prices, not seasonally adjusted, domestic currency", ko: "IMF 분기 국민계정: 경상가격 GDP, 계절조정 전, 자국 통화"}
+    url: https://data.imf.org/en/datasets/IMF.STA:QNEA
+    cadence: {en: quarterly, ko: 분기}
+    checked: 2026-11-02
+  bis.xru:
+    dataset: bis.XRU
+    publisher: bis
+    code: "WS_XRU Q.{area}.{currency}.A"
+    label: {en: BIS XRU, ko: BIS XRU}
+    name: {en: "BIS US dollar exchange rates: quarterly averages, domestic currency per US dollar", ko: "BIS 미 달러 환율: 분기 평균, 미 달러당 자국 통화"}
+    url: https://data.bis.org/topics/XRU
+    cadence: {en: quarterly average, ko: 분기 평균}
+    checked: 2026-11-02
+  imf.weo:
+    dataset: imf.WEO
+    publisher: imf
+    code: "WEO {country}.GGXWDG_NGDP, GGXCNL_NGDP, GGXONLB_NGDP, NGDP, NGDPD, BCA_NGDPD.A"
+    label: {en: IMF WEO, ko: IMF WEO}
+    name: {en: "IMF World Economic Outlook database: general government gross debt, overall and primary balance, GDP in national currency and US dollars, current account balance", ko: "IMF 세계경제전망 데이터베이스: 일반정부 총부채, 재정수지와 기초재정수지, 자국 통화·달러 표시 GDP, 경상수지"}
+    url: https://data.imf.org/en/datasets/IMF.RES:WEO
+    cadence: {en: "annual, April and October vintages", ko: "연간, 4월·10월 판"}
+    checked: 2026-11-02
+  oecd.ltr:
+    dataset: fred.observations
+    publisher: oecd
+    code: "IRLTLT01{iso2}M156N"
+    label: {en: OECD long-term rates via FRED, ko: OECD 장기금리(FRED)}
+    name: {en: "OECD Main Economic Indicators: long-term government bond yields (10-year, monthly averages), retrieved from FRED; only the spread against the benchmark is shown", ko: "OECD 주요경제지표: 10년 만기 국채 수익률(월 평균), FRED 경유. 기준국 대비 스프레드만 보인다"}
+    url: https://fred.stlouisfed.org/series/IRLTLT01DEM156N
+    cadence: {en: monthly, ko: 월}
+    checked: 2026-11-02
+  imf.lending:
+    publisher: imf
+    code: extarr1
+    label: {en: IMF lending arrangements, ko: IMF 대출 약정}
+    name: {en: "IMF Finance Department: history of lending commitments by member (arrangement dates, amounts agreed and drawn)", ko: "IMF 재무국: 회원국별 대출 약정 이력(약정일, 승인·인출 금액)"}
+    url: https://www.imf.org/external/np/fin/tad/extarr1.aspx
+    cadence: {en: as arrangements are approved, ko: 약정 승인 시}
+    checked: 2026-11-02
+  eu.esm:
+    publisher: esm
+    code: financial-assistance
+    label: {en: ESM and EU programmes, ko: ESM·EU 프로그램}
+    name: {en: "European Stability Mechanism and European Commission: financial assistance programmes (ESM, EFSF, GLF) and EU balance-of-payments assistance", ko: "유럽안정메커니즘과 유럽연합 집행위원회: 금융지원 프로그램(ESM, EFSF, GLF)과 EU 국제수지 지원"}
+    url: https://www.esm.europa.eu/financial-assistance
+    cadence: {en: per programme, ko: 프로그램별}
+    checked: 2026-11-02
+  boc.boe:
+    publisher: boc
+    code: "DEBT_2026"
+    label: {en: BoC–BoE default database, ko: BoC–BoE 국가부도 데이터베이스}
+    name: {en: "Bank of Canada–Bank of England Sovereign Default Database, 2026 edition (Staff Analytical Paper 2026-48)", ko: "캐나다은행·영란은행 국가부도 데이터베이스, 2026년판(직원 분석 보고서 2026-48)"}
+    url: https://www.bankofcanada.ca/2026/10/staff-analytical-paper-2026-48/
+    cadence: {en: annual, ko: 연}
+    checked: 2026-11-02
+  eu.mip:
+    publisher: ec
+    code: MIP scoreboard
+    label: {en: EU MIP scoreboard, ko: EU MIP 지표표}
+    name: {en: "European Commission: macroeconomic imbalance procedure (MIP) scoreboard, the thresholds of rules R25 and R26", ko: "유럽연합 집행위원회: 거시경제 불균형 절차(MIP) 지표표, 규칙 R25·R26의 기준값"}
+    url: https://economy-finance.ec.europa.eu/economic-and-fiscal-governance/macroeconomic-imbalance-procedure/scoreboard_en
+    cadence: {en: annual, ko: 연}
+    checked: 2026-11-02
+
+# Which panel names which link (the Sources page lists them under each entry; V17 checks every id).
+panels:
+  world.pulse_swaps:   {en: "World · pulse: Fed liquidity swaps", ko: "세계 · 맥박: 연준 통화스왑", links: [fred.swpt]}
+  world.pulse_custody: {en: "World · pulse: Treasuries in custody for foreign official accounts", ko: "세계 · 맥박: 외국 공공부문 보관 미 국채", links: [fred.wmtsecl1]}
+  world.pulse_dollar:  {en: "World · pulse: broad dollar index", ko: "세계 · 맥박: 광의 달러지수", links: [fred.dtwexbgs]}
+  world.pulse_tic:     {en: "World · pulse: TIC net purchases, official and private", ko: "세계 · 맥박: TIC 순매수, 공공·민간", links: [tic.slt1]}
+  world.board:         {en: "World · Signal Board", ko: "세계 · 신호판", links: [bis.lbs, bis.lbs_adj, bis.dss_res, bis.dss_nat, bis.cbs, imf.irfcl, bis.tc, imf.iip, imf.bop, bis.gli]}
+  world.withdrawals:   {en: "World · largest withdrawals this quarter", ko: "세계 · 이번 분기 가장 큰 유출", links: [bis.lbs_adj, bis.dss_nat]}
+  world.gli:         {en: "World · structure: dollar credit to non-banks outside the US", ko: "세계 · 구조: 미국 밖 비은행의 달러 부채", links: [bis.gli]}
+  world.swaps:       {en: "World · note: dollar debt in FX swaps and forwards", ko: "세계 · 주석: 외환스왑·선물환 속 달러 채무", links: [paper.borio2022, bis.gli]}
+  world.apex:        {en: "World · structure: issuing central banks, assets", ko: "세계 · 구조: 발권 중앙은행 총자산", links: [bis.cbta, fred.walcl, ecb.ilm]}
+  world.countries:   {en: "World · structure: the 12 largest gross external liabilities (incl. equity)", ko: "세계 · 구조: 대외금융부채(총액·지분 포함) 상위 12개 경제", links: [imf.iip]}
+  world.pairs:       {en: "World · structure: flows through the hubs", ko: "세계 · 구조: 허브를 거친 자금", links: [imf.pip, bis.lbs]}
+  world.cofer:       {en: "World · structure: the currency of reserves", ko: "세계 · 구조: 외환보유액의 통화", links: [imf.cofer]}
+  method.offshore:   {en: "Method · what the World page can and cannot see", ko: "방법론 · 세계 화면에 포함되는 것과 포함되지 않는 것", links: [paper.bisqr2603]}
+  market.equity:     {en: "Markets · portfolio equity matrix", ko: "시장 · 증권투자(주식) 행렬", links: [imf.pip, paper.cmns2021]}
+  market.bonds:      {en: "Markets · portfolio debt matrix", ko: "시장 · 증권투자(채권) 행렬", links: [imf.pip, paper.cmns2021]}
+  market.bank:       {en: "Markets · bank loans and deposits matrix", ko: "시장 · 은행 대출·예금 행렬", links: [bis.lbs, paper.cmns2021]}
+  market.fdi:        {en: "Markets · direct investment matrix", ko: "시장 · 직접투자 행렬", links: [imf.dip, paper.cmns2021]}
+  # 2 Nov 2026 (method 1.5): the views of the export surface and the Sovereign section
+  market.bank_cut:   {en: "Markets · bank: cut a lender (R21)", ko: "시장 · 은행: 대출국 하나가 대출을 줄이면(R21)", links: [bis.lbs, imf.irfcl]}   # LBS loans and deposits and IRFCL net reserves only (CBS is not used)
+  world.changes:     {en: "World · what changed since the quarter before (R20)", ko: "세계 · 직전 분기와 달라진 것(R20)", links: [bis.lbs_adj, bis.dss_nat, bis.cbs, imf.irfcl]}
+  earn.annual:       {en: "Earnings · annual: net trade and net primary income over GDP", ko: "소득 · 연간: 순수출과 본원소득수지의 GDP 대비", links: [wb.wdi]}
+  earn.quarterly:    {en: "Earnings · quarterly: BOP credits and debits over four-quarter GDP, gross IIP", ko: "소득 · 분기: 국제수지 수입·지급의 4분기 GDP 대비, 대외금융자산·부채 총액", links: [imf.bop_q, imf.qnea, bis.xru, imf.iip, wb.wdi]}
+  sovereign.fiscal:  {en: "Sovereign · fiscal rules R22–R24: debt, deficit, debt snowball", ko: "국가 재정 · 재정 규칙 R22–R24: 국가채무, 재정적자, 부채 눈덩이", links: [imf.weo]}
+  sovereign.external: {en: "Sovereign · external rules R25–R27: current account, net IIP, short-term claims over net reserves", ko: "국가 재정 · 대외 규칙 R25–R27: 경상수지, 순대외금융자산, 순준비자산 대비 단기 청구권", links: [imf.bop, imf.iip, imf.weo, bis.cbs, imf.irfcl, eu.mip]}
+  sovereign.market:  {en: "Sovereign · market rule R28: 10-year yield spread against the benchmark", ko: "국가 재정 · 시장 규칙 R28: 기준국 대비 10년물 금리 스프레드", links: [oecd.ltr]}
+  sovereign.episodes: {en: "Sovereign · episodes: IMF arrangements, euro-area and EU programmes, defaults", ko: "국가 재정 · 사례: IMF 약정, 유로지역·EU 프로그램, 채무불이행", links: [imf.lending, eu.esm, boc.boe]}
+  method.episodes:   {en: "Method · the validation set of the Signal Board (episodes/global)", ko: "방법론 · 신호판의 검증 사례(episodes/global)", links: [bis.lbs_adj, bis.dss_nat]}

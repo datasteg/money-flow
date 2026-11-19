@@ -1,0 +1,153 @@
+# money-flow's internal views for the datasteg API and MCP service (the API service contract, surface 1.0).
+# The route handlers are app/app/svc/v1/**/route.ts; lib/svcviews.ts builds every answer from the release the pages
+# serve (lib/data.ts readers), so a view returns only what a page draws. Licence: V11 and R14 (config/method.yaml);
+# tests/test_svc_v11.py runs every example below and fails on a breach. Every view takes ?release=<tag> (the pages' ?r=).
+id: money-flow
+title: money-flow
+summary: Where money is created and how it flows between economies, from BIS, IMF and central-bank statistics.
+site: https://money-flow.datasteg.com
+internal: http://money-flow:8080
+status: live
+surface: "1.0"
+hooks: [search, item, economy, economies]
+item_kinds: [economy, market, board, sovereign]
+search_example: korea
+item_example: "economy:KOR"
+
+views:
+  - id: board
+    path: /board
+    summary: The Signal Board for one quarter, funding vulnerability against bank and bond flows for 36 borrowing economies.
+    params:
+      quarter: { type: string, pattern: "^\\d{4}-(\\d{2}-\\d{2}|Q[1-4])$", description: "Board quarter as 2026-06-30 or 2026-Q2; default the quarter the World page shows (the newest)" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag such as 20261109.1; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: {}
+    tool:
+      name: money_flow_board
+      title: The Signal Board
+      description: >-
+        Signal Board, 36 economies: vulnerability score (0-100; half exposure: A1 FX credit/GDP and A2,
+        BIS banks' claims due within a year / A2's reserve base; half buffer weakness: net IIP, current account)
+        against the bank and bond funding flow. net_reserves_usd_bn is unfloored (may be negative);
+        a2_reserve_base_usd_bn is A2's floored base. For "who is exposed" or "where is funding leaving".
+
+  - id: economies
+    path: /economies
+    summary: The 179 economies with a money-flow page, with code, name, region and page.
+    params:
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: false
+    max_bytes: 60000
+    example: {}
+
+  - id: economy
+    path: /economies/{iso3}
+    summary: One economy's page, one part at a time, the headline figures and marks, the money ladder in and out, its indicators or its data checks.
+    params:
+      iso3: { in: path, type: string, pattern: "^[A-Za-z]{3}$", description: "ISO 3166-1 alpha-3 code, such as KOR (EMU for the euro area)" }
+      part: { type: string, enum: [summary, ladder, indicators, checks], default: summary, description: "Which part of the page: summary (headline figures, Signal Board mark, sovereign signals), ladder (who holds claims on it and what it holds, by channel), indicators (the series the page draws, newest values), checks" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: false
+    max_bytes: 60000
+    example: { iso3: KOR }
+    tool:
+      name: money_flow_economy
+      title: One economy's money
+      description: >-
+        One economy's cross-border money from BIS and IMF statistics: foreign exchange reserves, gross and net
+        external position, the funding ladder (who holds its debt, equity, bank claims and direct investment, and
+        what it holds abroad), its Signal Board mark, sovereign stress signals and data checks. Pick part=summary,
+        ladder, indicators or checks.
+
+  - id: indicator
+    path: /economies/{iso3}/indicators/{id}
+    summary: One indicator of an economy page as points (reserves, money, IIP and BOP items, bank claims in dollars), in USD bn.
+    params:
+      iso3: { in: path, type: string, pattern: "^[A-Za-z]{3}$", description: "ISO 3166-1 alpha-3 code, such as KOR" }
+      id: { in: path, type: string, pattern: "^[a-z0-9_]{1,40}$", description: "Indicator id from part=indicators, such as fx_reserves, broad_money, iip_net, iip_liabilities_total, bop_assets_portfolio" }
+      last: { type: integer, minimum: 1, maximum: 400, default: 40, description: "How many of the newest points" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: { iso3: KOR, id: fx_reserves }
+
+  - id: market
+    path: /markets/{market}
+    summary: One market's holder by destination matrix, one cell, a debtor's largest holders or a creditor's largest holdings (at most 25).
+    params:
+      market: { in: path, type: string, enum: [equity, bonds, bank, fdi], description: "equity, bonds (portfolio debt), bank (loans and deposits) or fdi (direct investment)" }
+      creditor: { type: string, pattern: "^[A-Za-z]{3}$", description: "Holder (row), ISO alpha-3; with debtor, one cell" }
+      debtor: { type: string, pattern: "^[A-Za-z]{3}$", description: "Destination (column), ISO alpha-3; alone, its largest holders" }
+      limit: { type: integer, minimum: 1, maximum: 25, default: 10, description: "Rows at most" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: { market: bank, debtor: KOR }
+
+  - id: lender_cut
+    path: /markets/bank/lender-cut
+    summary: Cut a lender (rule R21), the first-round loss if one banking system cut its loans and deposits to a Signal Board economy, against net reserves.
+    params:
+      debtor: { type: string, pattern: "^[A-Za-z]{3}$", description: "Borrowing economy (one of the 36 board economies), ISO alpha-3; default the largest borrower" }
+      lender: { type: string, pattern: "^[A-Za-z]{3}$", description: "Lending banking system, ISO alpha-3; without debtor, every debtor it lends to" }
+      cut_pct: { type: integer, minimum: 10, maximum: 50, default: 30, description: "The cut in per cent, 10 to 50 in steps of 5" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: { debtor: KOR }
+    tool:
+      name: money_flow_bank_lenders
+      title: Who lends to an economy, and a cut
+      description: >-
+        Bank lenders of an economy (loans and deposits owed, BIS locational, all sectors): each lending system's
+        share, the total in USD bn, net reserves (IRFCL I + II, unfloored), and the first-round loss if a lender
+        cuts by cut_pct. Reporters with all instruments only (Japan, Germany) are listed apart in
+        all_instrument_reporters, without a share. Give debtor, lender, or both.
+
+  - id: sovereign
+    path: /sovereign
+    summary: The Sovereign page's seven stress rules (R22-R28) for one economy, with yearly counts and IMF projections, or the 36 economies' current signals.
+    params:
+      economy: { type: string, pattern: "^[A-Za-z]{3}$", description: "One of the 36 Sovereign economies, ISO alpha-3; leave out for all of them" }
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: { economy: KOR }
+    tool:
+      name: money_flow_sovereign
+      title: Sovereign stress signals
+      description: >-
+        Sovereign stress signals, 36 economies: seven threshold rules (government debt, deficit, debt snowball,
+        current account, net IIP, A2 = BIS banks' claims due within a year / A2's reserve base, 10-year spread) from
+        IMF WEO, BIS, IMF and OECD; the count against past crises, each year's source named. A count, not a
+        forecast. Give economy for one, none for all.
+
+  - id: pulse
+    path: /pulse
+    summary: The World pulse, Fed swap lines, Treasuries in custody for foreign officials, the broad dollar index (52 weeks) and TIC net purchases.
+    params:
+      release: { type: string, pattern: "^\\d{8}\\.\\d+$", description: "A kept release tag; default the latest" }
+    table: true
+    max_bytes: 60000
+    example: {}
+
+  - id: releases
+    path: /releases
+    summary: The kept releases of money-flow's data, newest first, with method, checks and files changed.
+    params:
+      limit: { type: integer, minimum: 1, maximum: 100, default: 25, description: "Releases per answer" }
+      cursor: { type: string, description: "The cursor a previous answer gave" }
+    table: true
+    max_bytes: 60000
+    example: {}
+
+  - id: release
+    path: /releases/{tag}
+    summary: One release's manifest, previous release, method, build time, source vintages, checks and the files that changed.
+    params:
+      tag: { in: path, type: string, pattern: "^\\d{8}\\.\\d+$", description: "Release tag, such as 20261109.1" }
+    table: true
+    max_bytes: 60000
+    example: { tag: "20261109.1" }

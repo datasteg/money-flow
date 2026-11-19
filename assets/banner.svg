@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
+  <title id="t">money-flow</title>
+  <desc id="d">The money-flow banner in the Sinho design system: the wordmark on asphalt, a money ladder of holders flowing into four channels, and a centre-line rule.</desc>
+  <style>.s { font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif; } .w { font-family: Georgia, 'Times New Roman', Times, serif; }</style>
+  <rect width="1280" height="320" fill="#101114"/>
+  <rect x="0" y="0" width="1280" height="4" fill="#333740"/>
+  <text x="64" y="92" class="s" font-size="14" font-weight="700" letter-spacing="1.6" fill="#8DB6FF">DATASTEG · THE MONEY LADDER</text>
+  <text x="62" y="168" class="w" font-size="76" fill="#EDEDEA" letter-spacing="-1">money-flow</text>
+  <text x="64" y="212" class="s" font-size="22" fill="#B3B6BB">Where money is created and how it flows between economies</text>
+  <circle cx="70" cy="251" r="5" fill="#FF3D6E"/>
+  <text x="84" y="256" class="s" font-size="15" fill="#90949A">BIS · IMF · central banks  →  rules, checks, a licence gate  →  a bilingual site and API</text>
+  <text x="730" y="58" class="s" font-size="11" font-weight="700" letter-spacing="1.3" fill="#90949A">HOLDERS</text>
+  <text x="1040" y="58" class="s" font-size="11" font-weight="700" letter-spacing="1.3" fill="#90949A">CHANNELS</text>
+  <g>
+    <path d="M740 86.5 C890 86.5 890 86.5 1040 86.5" stroke="#5B8FF0" stroke-width="25" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 155.0 C890 155.0 890 104.0 1040 104.0" stroke="#5B8FF0" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 201.0 C890 201.0 890 114.0 1040 114.0" stroke="#5B8FF0" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 234.5 C890 234.5 890 121.5 1040 121.5" stroke="#5B8FF0" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 265.5 C890 265.5 890 126.5 1040 126.5" stroke="#5B8FF0" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 104.0 C890 104.0 890 140.0 1040 140.0" stroke="#1FAE5C" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 165.0 C890 165.0 890 150.0 1040 150.0" stroke="#1FAE5C" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 208.5 C890 208.5 890 157.5 1040 157.5" stroke="#1FAE5C" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 242.0 C890 242.0 890 165.0 1040 165.0" stroke="#1FAE5C" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 270.5 C890 270.5 890 172.5 1040 172.5" stroke="#1FAE5C" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 116.5 C890 116.5 890 188.5 1040 188.5" stroke="#B89A2E" stroke-width="15" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 175.0 C890 175.0 890 201.0 1040 201.0" stroke="#B89A2E" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 213.5 C890 213.5 890 208.5 1040 208.5" stroke="#B89A2E" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 249.5 C890 249.5 890 213.5 1040 213.5" stroke="#B89A2E" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 278.0 C890 278.0 890 221.0 1040 221.0" stroke="#B89A2E" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 134.0 C890 134.0 890 242.0 1040 242.0" stroke="#E3407E" stroke-width="20" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 185.0 C890 185.0 890 257.0 1040 257.0" stroke="#E3407E" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 221.0 C890 221.0 890 267.0 1040 267.0" stroke="#E3407E" stroke-width="10" stroke-opacity="0.62" fill="none"/>
+    <path d="M740 254.5 C890 254.5 890 274.5 1040 274.5" stroke="#E3407E" stroke-width="5" stroke-opacity="0.62" fill="none"/>
+  </g>
+  <rect x="730" y="74" width="10" height="70" fill="#C3C6CC"/>
+  <rect x="730" y="150" width="10" height="40" fill="#C3C6CC"/>
+  <rect x="730" y="196" width="10" height="30" fill="#C3C6CC"/>
+  <rect x="730" y="232" width="10" height="25" fill="#C3C6CC"/>
+  <rect x="730" y="263" width="10" height="20" fill="#C3C6CC"/>
+  <rect x="1040" y="74" width="10" height="55" fill="#5B8FF0"/>
+  <rect x="1040" y="135" width="10" height="40" fill="#1FAE5C"/>
+  <rect x="1040" y="181" width="10" height="45" fill="#B89A2E"/>
+  <rect x="1040" y="232" width="10" height="45" fill="#E3407E"/>
+  <text x="1058" y="106" class="s" font-size="13" fill="#B3B6BB">Portfolio debt</text>
+  <text x="1058" y="160" class="s" font-size="13" fill="#B3B6BB">Bank loans and deposits</text>
+  <text x="1058" y="208" class="s" font-size="13" fill="#B3B6BB">Direct investment</text>
+  <text x="1058" y="260" class="s" font-size="13" fill="#B3B6BB">Portfolio equity</text>
+  <rect x="64" y="300" width="36" height="4" fill="#FFC31A"/><rect x="136" y="300" width="36" height="4" fill="#FFC31A"/><rect x="208" y="300" width="36" height="4" fill="#FFC31A"/><rect x="280" y="300" width="36" height="4" fill="#FFC31A"/><rect x="352" y="300" width="36" height="4" fill="#FFC31A"/><rect x="424" y="300" width="36" height="4" fill="#FFC31A"/><rect x="496" y="300" width="36" height="4" fill="#FFC31A"/><rect x="568" y="300" width="36" height="4" fill="#FFC31A"/><rect x="640" y="300" width="36" height="4" fill="#FFC31A"/><rect x="712" y="300" width="36" height="4" fill="#FFC31A"/><rect x="784" y="300" width="36" height="4" fill="#FFC31A"/><rect x="856" y="300" width="36" height="4" fill="#FFC31A"/><rect x="928" y="300" width="36" height="4" fill="#FFC31A"/><rect x="1000" y="300" width="36" height="4" fill="#FFC31A"/><rect x="1072" y="300" width="36" height="4" fill="#FFC31A"/><rect x="1144" y="300" width="36" height="4" fill="#FFC31A"/>
+</svg>
